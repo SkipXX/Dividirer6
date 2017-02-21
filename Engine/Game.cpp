@@ -26,7 +26,7 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd)
 {
-
+	m_circles.push_back(Circle(Vec2(200, 200), 10));
 }
 
 void Game::Go()
@@ -39,10 +39,16 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	
+	if (wnd.mouse.LeftIsPressed())
+	{
+		m_circles.at(0).m_pos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+	}
 }
 
 void Game::ComposeFrame()
 {
-	
+	for (auto& ii : m_circles)
+	{
+		ii.Draw(gfx);
+	}
 }

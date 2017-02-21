@@ -24,11 +24,10 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
-#include "Ball.h"
 #include "FrameTimer.h"
-#include "MyBrick.h"
 #include <vector>
-#include "Pad.h"
+
+#include "Circle.h"
 
 class Game
 {
@@ -48,5 +47,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	std::vector<Circle> m_circles;
+
 	/********************************/
 };

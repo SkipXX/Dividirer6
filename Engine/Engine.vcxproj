@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="ChiliException.h" />
     <ClInclude Include="ChiliWin.h" />
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="FrameTimer.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
