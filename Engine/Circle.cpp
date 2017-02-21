@@ -32,3 +32,8 @@ void Circle::Move(Vec2 dv)
 {
 	m_pos += dv;
 }
+
+void Circle::Update(float dt)
+{
+	m_pos += m_v * dt;
+}

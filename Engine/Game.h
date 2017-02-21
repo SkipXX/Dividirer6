@@ -49,5 +49,12 @@ private:
 	/*  User Variables              */
 	std::vector<Circle> m_circles;
 
+	float Federlaenge = 50.0f;
+	float Federkonstante = 20.0f;
+
+	bool dragging = false;
+
+	FrameTimer timer;
+
 	/********************************/
 };

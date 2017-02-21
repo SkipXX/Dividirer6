@@ -21,12 +21,17 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+#include <cmath>
+
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd)
 {
-	m_circles.push_back(Circle(Vec2(200, 200), 10));
+	m_circles.push_back(Circle(Vec2(200, 200), 15, Colors::Blue));
+	m_circles.push_back(Circle(Vec2(150, 150), 10, Colors::Red));
+
+	//m_circles.at(1).m_v = Vec2(100, 100);
 }
 
 void Game::Go()
@@ -39,9 +44,55 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	float dt = timer.Mark();
+
+
+	//Dragging
+	if (!wnd.mouse.LeftIsPressed())
+	{
+		dragging = false;
+	}
+
 	if (wnd.mouse.LeftIsPressed())
 	{
-		m_circles.at(0).m_pos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+
+		Vec2 distanceToCircle = (mousePos - m_circles.at(0).m_pos);
+		if (dragging || distanceToCircle.GetLength() < m_circles.at(0).m_radius)
+		{
+			dragging = true;
+			m_circles.at(0).m_pos = mousePos;
+		}
+	}
+
+	//Feder shit
+	for (auto& ii : m_circles)
+	{
+		if (&ii == &m_circles.at(0)) continue;
+		
+		Vec2 distance_v = (ii.m_pos - m_circles.at(0).m_pos);
+		float distance = distance_v.GetLength();
+
+		if (distance > Federlaenge)
+		{
+			ii.m_v -= distance_v.GetNormalized() * Federkonstante * (distance - Federlaenge) * dt;
+		}
+		else if (distance < Federlaenge)
+		{
+			ii.m_v -= distance_v.GetNormalized() * Federkonstante * 4 * (distance - Federlaenge) * dt;
+		}
+	}
+
+	//Daempfung
+	for (auto& ii : m_circles)
+	{
+		ii.m_v *= pow(0.4f,dt);
+	}
+
+	//Movement
+	for (auto& ii : m_circles)
+	{
+		ii.Update(dt);
 	}
 }
 
@@ -50,5 +101,11 @@ void Game::ComposeFrame()
 	for (auto& ii : m_circles)
 	{
 		ii.Draw(gfx);
+	}
+
+	for (auto& ii : m_circles)
+	{
+		if (&ii == &m_circles.at(0)) continue;
+		gfx.DrawLine(m_circles.at(0).m_pos,ii.m_pos);	
 	}
 }
