@@ -89,6 +89,13 @@ void Game::UpdateModel()
 		ii.m_v *= pow(0.4f,dt);
 	}
 
+	//Gravitation
+	for (auto& ii : m_circles)
+	{
+		if (&ii == &m_circles.at(0)) continue;
+		ii.m_v += Vec2(0,500) * dt;
+	}
+
 	//Movement
 	for (auto& ii : m_circles)
 	{
