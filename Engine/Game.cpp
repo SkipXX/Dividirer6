@@ -46,60 +46,68 @@ void Game::UpdateModel()
 {
 	float dt = timer.Mark();
 
+	inputHandling();
 
-	//Dragging
-	if (!wnd.mouse.LeftIsPressed())
+	if (!pause)
 	{
-		dragging = false;
-	}
-
-	if (wnd.mouse.LeftIsPressed())
-	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
-
-		Vec2 distanceToCircle = (mousePos - m_circles.at(0).m_pos);
-		if (dragging || distanceToCircle.GetLength() < m_circles.at(0).m_radius)
+		//Dragging
+		if (!wnd.mouse.LeftIsPressed())
 		{
-			dragging = true;
-			m_circles.at(0).m_pos = mousePos;
+			dragging = false;
 		}
-	}
 
-	//Feder shit
-	for (auto& ii : m_circles)
-	{
-		if (&ii == &m_circles.at(0)) continue;
-		
-		Vec2 distance_v = (ii.m_pos - m_circles.at(0).m_pos);
-		float distance = distance_v.GetLength();
-
-		if (distance > Federlaenge)
+		if (wnd.mouse.LeftIsPressed())
 		{
-			ii.m_v -= distance_v.GetNormalized() * Federkonstante * (distance - Federlaenge) * dt;
+			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+
+			Vec2 distanceToCircle = (mousePos - m_circles.at(0).m_pos);
+			if (dragging || distanceToCircle.GetLength() < m_circles.at(0).m_radius)
+			{
+				dragging = true;
+				m_circles.at(0).m_pos = mousePos;
+			}
 		}
-		else if (distance < Federlaenge)
+
+		//Feder shit
+		for (auto& ii : m_circles)
 		{
-			ii.m_v -= distance_v.GetNormalized() * Federkonstante * 4 * (distance - Federlaenge) * dt;
+			if (&ii == &m_circles.at(0)) continue;
+			
+			Vec2 distance_v = (ii.m_pos - m_circles.at(0).m_pos);
+			float distance = distance_v.GetLength();
+
+			if (distance > Federlaenge)
+			{
+				//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
+				ii.m_v -= distance_v.GetNormalized() * Federkonstante * 1 * (distance - Federlaenge) * dt;
+			}
+			if (distance < Federlaenge)
+			{
+				ii.m_v -= distance_v.GetNormalized() * Federkonstante * 4 * (distance - Federlaenge) * dt;
+			}
 		}
-	}
 
-	//Daempfung
-	for (auto& ii : m_circles)
-	{
-		ii.m_v *= pow(0.4f,dt);
-	}
+		//Daempfung
+		for (auto& ii : m_circles)
+		{
+			ii.m_v *= pow(0.8f,dt);
+		}
 
-	//Gravitation
-	for (auto& ii : m_circles)
-	{
-		if (&ii == &m_circles.at(0)) continue;
-		ii.m_v += Vec2(0,500) * dt;
-	}
+		//Gravitation
+		if (m_gravitation)
+		{
+			for (auto& ii : m_circles)
+			{
+				if (&ii == &m_circles.at(0)) continue;
+				ii.m_v += Vec2(0,600.0f) * dt;
+			}
+		}
 
-	//Movement
-	for (auto& ii : m_circles)
-	{
-		ii.Update(dt);
+		//Movement
+		for (auto& ii : m_circles)
+		{
+			ii.Update(dt);
+		}
 	}
 }
 
@@ -115,4 +123,46 @@ void Game::ComposeFrame()
 		if (&ii == &m_circles.at(0)) continue;
 		gfx.DrawLine(m_circles.at(0).m_pos,ii.m_pos);	
 	}
+}
+
+void Game::inputHandling()
+{
+	//Esc to exit ... NOT BUFFERED
+	if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
+	{
+		exit(1337);
+	}
+
+	///Options
+	//pause funktion
+	if (wnd.kbd.KeyIsPressed(VK_SPACE))
+	{
+		inputBuffer |= 0x1;
+	}
+
+	//if G is pressed (Gravitation ON/OFF)
+	if (wnd.kbd.KeyIsPressed(0x47))
+	{
+		inputBuffer |= 0x2;
+	}
+
+
+	if (inputBuffer)
+	{
+		// 0x1 = 'SPACE'-Key ... pause funktion
+		if ((inputBuffer & 0x1) && !wnd.kbd.KeyIsPressed(VK_SPACE))
+		{
+			pause = !pause;
+			inputBuffer &= ~0x1;
+		}
+
+		// 0x2 = 'g'-Key ... Gravitation ON/OFF
+		if ((inputBuffer & 0x2) && !wnd.kbd.KeyIsPressed(0x47))
+		{
+			m_gravitation = !m_gravitation;
+			inputBuffer &= ~0x2;
+		}
+
+	}
+	///
 }
