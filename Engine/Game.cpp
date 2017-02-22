@@ -86,9 +86,12 @@ void Game::UpdateModel()
 		}
 
 		//Daempfung
-		for (auto& ii : m_circles)
+		if (m_reibung)
 		{
-			ii.m_v *= pow(Daempfungsfaktor,dt);
+			for (auto& ii : m_circles)
+			{
+				ii.m_v *= pow(Daempfungsfaktor,dt);
+			}
 		}
 
 		//Gravitation
@@ -101,6 +104,7 @@ void Game::UpdateModel()
 			}
 		}
 
+		//bounce BOUNCE
 		DoCircleCollision();
 
 		//Movement
@@ -148,6 +152,42 @@ void Game::ComposeFrame()
 		}
 	}
 
+	//Reibung und Grav toggle
+	if (m_reibung)
+	{	
+		int x = 10;
+		int y = 10;
+
+		gfx.PutPixel(x + 0, y+ 0, Colors::White);
+		gfx.PutPixel(x + 1, y+ 0, Colors::White);
+		gfx.PutPixel(x + 2, y+ 0, Colors::White);
+		gfx.PutPixel(x + 0, y+ 1, Colors::White);
+		gfx.PutPixel(x + 2, y+ 1, Colors::White);
+		gfx.PutPixel(x + 0, y+ 2, Colors::White);
+		gfx.PutPixel(x + 1, y+ 2, Colors::White);
+		gfx.PutPixel(x + 2, y+ 2, Colors::White);
+		gfx.PutPixel(x + 0, y+ 3, Colors::White);
+		gfx.PutPixel(x + 1, y+ 3, Colors::White);
+		gfx.PutPixel(x + 0, y+ 4, Colors::White);
+		gfx.PutPixel(x + 2, y+ 4, Colors::White);
+	}
+	if (m_gravitation)
+	{
+		int x = 15;
+		int y = 10;
+
+		gfx.PutPixel(x + 0, y + 0, Colors::White);
+		gfx.PutPixel(x + 1, y + 0, Colors::White);
+		gfx.PutPixel(x + 2, y + 0, Colors::White);
+		gfx.PutPixel(x + 0, y + 1, Colors::White);
+		gfx.PutPixel(x + 0, y + 2, Colors::White);
+		gfx.PutPixel(x + 2, y + 2, Colors::White);
+		gfx.PutPixel(x + 0, y + 3, Colors::White);
+		gfx.PutPixel(x + 1, y + 3, Colors::White);
+		gfx.PutPixel(x + 2, y + 3, Colors::White);
+		gfx.PutPixel(x + 2, y + 4, Colors::White);
+	}
+
 	//Draws Ground and Wall
 	gfx.DrawRect(0,gfx.ScreenHeight - 20,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
 	gfx.DrawRect(gfx.ScreenWidth - 20, 0, gfx.ScreenWidth, gfx.ScreenHeight, Colors::Gray);
@@ -174,6 +214,11 @@ void Game::inputHandling()
 		inputBuffer |= 0x2;
 	}
 
+	//if R is pressed (Reibung ON/OFF)
+	if (wnd.kbd.KeyIsPressed(0x52))
+	{
+		inputBuffer |= 0x4;
+	}
 
 	if (inputBuffer)
 	{
@@ -189,6 +234,13 @@ void Game::inputHandling()
 		{
 			m_gravitation = !m_gravitation;
 			inputBuffer &= ~0x2;
+		}
+
+		// 0x4 = 'r'-Key ... Gravitation ON/OFF
+		if ((inputBuffer & 0x4) && !wnd.kbd.KeyIsPressed(0x52))
+		{
+			m_reibung = !m_reibung;
+			inputBuffer &= ~0x4;
 		}
 
 	}
