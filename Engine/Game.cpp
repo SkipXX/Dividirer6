@@ -32,9 +32,9 @@ Game::Game(MainWindow& wnd)
 	m_circles.push_back(CircleObject(Vec2(50, 100), 10, Colors::Red));
 	m_circles.push_back(CircleObject(Vec2(50, 150), 10, Colors::Green));
 
-	m_circles.at(1).m_links.push_back(SpringLink(&(m_circles.at(0).m_pos), Federkonstante, Federlaenge));
-	m_circles.at(2).m_links.push_back(SpringLink(&(m_circles.at(1).m_pos), Federkonstante, Federlaenge));
-	//m_circles.at(1).m_v = Vec2(100, 100);
+	CreateMutualLink(&m_circles.at(0), &m_circles.at(1), Federkonstante, Federlaenge);
+	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
+	CreateMutualLink(&m_circles.at(0), &m_circles.at(2), Federkonstante, Federlaenge);
 }
 
 void Game::Go()
@@ -157,4 +157,10 @@ void Game::inputHandling()
 
 	}
 	///
+}
+
+void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2, float c, float l)
+{
+	C1->m_links.push_back(SpringLink(&(C2->m_pos), c, l));
+	C2->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
 }
