@@ -45,6 +45,7 @@ private:
 	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
 	void DoCircleCollision(float dt);
 	void setupObjects();
+	void DoWallCollision();
 	/********************************/
 private:
 	MainWindow& wnd;

@@ -44,7 +44,10 @@ void Game::UpdateModel()
 {
 	float dt = timer.Mark() * GameSpeed / float(Iterations);
 	assert(dt < 0.1f);
+	
+	//INPUT
 	inputHandling();
+
 	for (int nn = 0; nn < Iterations; nn++)
 	{
 		//Dragging 1/2
@@ -124,26 +127,12 @@ void Game::UpdateModel()
 
 
 			//Ground and Wall
-			for (auto& ii : m_circles)
-			{
-				if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
-				{
-					ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
-					ii.m_v.y = 0.0f;
-
-					//ii.m_v *= pow(Reibungskoeffizient, dt);
-				}
-				if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
-				{
-					ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-					ii.m_v.x = 0.0f;
-
-					//ii.m_v *= pow(Reibungskoeffizient, dt);
-				}
+			DoWallCollision();
 
 			//bounce BOUNCE
 			DoCircleCollision(dt);
-			}
+
+			
 		}
 	}
 }
@@ -331,4 +320,25 @@ void Game::setupObjects()
 	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
 	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
 	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
+}
+
+void Game::DoWallCollision()
+{
+	for (auto& ii : m_circles)
+	{
+		if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
+		{
+			ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
+			ii.m_v.y = 0.0f;
+
+			//ii.m_v *= pow(Reibungskoeffizient, dt);
+		}
+		if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
+		{
+			ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
+			ii.m_v.x = 0.0f;
+
+			//ii.m_v *= pow(Reibungskoeffizient, dt);
+		}
+	}
 }
