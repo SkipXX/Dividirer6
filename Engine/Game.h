@@ -48,7 +48,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	std::vector<Circle> m_circles;
+	std::vector<CircleObject> m_circles;
 
 	float Federlaenge = 100.0f;
 	float Federkonstante = 20.0f;

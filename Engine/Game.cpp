@@ -28,8 +28,8 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd)
 {
-	m_circles.push_back(Circle(Vec2(200, 200), 15, Colors::Blue));
-	m_circles.push_back(Circle(Vec2(150, 150), 10, Colors::Red));
+	m_circles.push_back(CircleObject(Vec2(200, 200), 15, Colors::Blue));
+	m_circles.push_back(CircleObject(Vec2(150, 150), 10, Colors::Red));
 
 	//m_circles.at(1).m_v = Vec2(100, 100);
 }

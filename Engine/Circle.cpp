@@ -1,6 +1,6 @@
 #include "Circle.h"
 
-
+////////Circle/////////////
 
 Circle::Circle()
 	:
@@ -33,7 +33,23 @@ void Circle::Move(Vec2 dv)
 	m_pos += dv;
 }
 
-void Circle::Update(float dt)
+
+/////////////////////////////
+
+CircleObject::CircleObject()
+	:
+	Circle()
+{
+}
+
+CircleObject::CircleObject(Vec2 pos, float radius, Color color)
+	:
+	Circle(pos, radius, color)
+{
+}
+
+
+void CircleObject::Update(float dt)
 {
 	m_pos += m_v * dt;
 }
