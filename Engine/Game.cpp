@@ -128,8 +128,9 @@ void Game::ComposeFrame()
 		}
 	}
 
-	//Draws Ground
+	//Draws Ground and Wall
 	gfx.DrawRect(0,gfx.ScreenHeight - 20,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
+	gfx.DrawRect(gfx.ScreenWidth - 20, 0, gfx.ScreenWidth, gfx.ScreenHeight, Colors::Gray);
 }
 
 void Game::inputHandling()
