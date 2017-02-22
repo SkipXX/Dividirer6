@@ -22,19 +22,14 @@
 #include "Game.h"
 
 #include <cmath>
+#include <cassert>
 
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd)
 {
-	m_circles.push_back(CircleObject(Vec2(150, 50), 15, Colors::Blue));
-	m_circles.push_back(CircleObject(Vec2(100, 100), 15, Colors::Red));
-	m_circles.push_back(CircleObject(Vec2(100, 150), 15, Colors::Green));
-
-	//CreateMutualLink(&m_circles.at(0), &m_circles.at(1), Federkonstante, Federlaenge);
-	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
-	//CreateMutualLink(&m_circles.at(0), &m_circles.at(2), Federkonstante, Federlaenge);
+	setupObjects();
 }
 
 void Game::Go()
@@ -77,10 +72,24 @@ void Game::UpdateModel()
 
 				if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
 				{
-					ii.dragging = true;
-					ii.m_pos = mousePos;
-					ii.m_v = Vec2(0, 0);
-					LastMousePos = mousePos;
+					bool OnlyOne = true;
+					for (auto& jj : m_circles)
+					{
+						if (&ii == &jj) continue;
+						if (jj.dragging)
+						{
+							OnlyOne = false;
+							break;
+						}
+					}
+					if (OnlyOne)
+					{
+						ii.dragging = true;
+						ii.m_pos = mousePos;
+						ii.m_v = Vec2(0, 0);
+						LastMousePos = mousePos;
+					}
+
 				}
 			}
 		}
@@ -104,8 +113,6 @@ void Game::UpdateModel()
 			}
 		}
 
-		//bounce BOUNCE
-		DoCircleCollision();
 
 		//Movement
 		for (auto& ii : m_circles)
@@ -113,6 +120,8 @@ void Game::UpdateModel()
 			ii.Update(dt);
 		}
 
+		//bounce BOUNCE
+		DoCircleCollision(dt);
 
 		//Ground and Wall
 		for (auto& ii : m_circles)
@@ -220,6 +229,12 @@ void Game::inputHandling()
 		inputBuffer |= 0x4;
 	}
 
+	//if RETURN is pressed (reset objects)
+	if (wnd.kbd.KeyIsPressed(VK_RETURN))
+	{
+		inputBuffer |= 0x8;
+	}
+
 	if (inputBuffer)
 	{
 		// 0x1 = 'SPACE'-Key ... pause funktion
@@ -243,17 +258,25 @@ void Game::inputHandling()
 			inputBuffer &= ~0x4;
 		}
 
+		// 0x8 = 'RETURN'-Key ... reset objects
+		if ((inputBuffer & 0x8) && !wnd.kbd.KeyIsPressed(VK_RETURN))
+		{
+			setupObjects();
+			inputBuffer &= ~0x8;
+		}
 	}
 	///
 }
 
-void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2, float c, float l)
+void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,float c, float l)
 {
+	assert(C1 != C2);
+	if (C1 == C2) return;
 	C1->m_links.push_back(SpringLink(&(C2->m_pos), c, l));
 	C2->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
 }
 
-void Game::DoCircleCollision()
+void Game::DoCircleCollision(float dt)
 {
 	for (auto& ii : m_circles)
 	{
@@ -272,4 +295,26 @@ void Game::DoCircleCollision()
 			}
 		}
 	}
+}
+
+void Game::setupObjects()
+{
+	m_circles.clear();
+
+	m_circles.push_back(CircleObject(Vec2(150, 50), 15, Colors::Blue));		//0
+	m_circles.push_back(CircleObject(Vec2(100, 100), 15, Colors::Red));		//1
+	m_circles.push_back(CircleObject(Vec2(100, 150), 15, Colors::Green));	//2
+	m_circles.push_back(CircleObject(Vec2(150, 100), 15, Colors::Cyan));	//3
+	m_circles.push_back(CircleObject(Vec2(150, 150), 15, Colors::Gray));	//4
+	//m_circles.push_back(CircleObject(Vec2(200, 100), 15, Colors::Magenta));	//5
+	//m_circles.push_back(CircleObject(Vec2(200, 150), 15, Colors::Yellow));	//6
+
+
+	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(2), &m_circles.at(4), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(3), &m_circles.at(4), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(1), &m_circles.at(3), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
 }

@@ -1,5 +1,8 @@
 #include "Circle.h"
 
+#define MY_INNENKONSTANTE 1.0f
+#define MY_AUSSENKONSTANTE 1.0f
+
 ////////Circle/////////////
 
 Circle::Circle()
@@ -76,11 +79,11 @@ void CircleObject::Update_Links(float dt)
 		if (distance > ii.springLength)
 		{
 			//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
-			m_v += distance_v.GetNormalized() * ii.springConstant * 1 * (distance - ii.springLength) * dt;
+			m_v += distance_v.GetNormalized() * ii.springConstant * MY_INNENKONSTANTE * (distance - ii.springLength) * dt;
 		}
 		if (distance < ii.springLength)
 		{
-			m_v += distance_v.GetNormalized() * ii.springConstant * 4 * (distance - ii.springLength) * dt;
+			m_v += distance_v.GetNormalized() * ii.springConstant * MY_AUSSENKONSTANTE * (distance - ii.springLength) * dt;
 		}
 	}
 }

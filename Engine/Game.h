@@ -43,7 +43,8 @@ private:
 	/*  User Functions              */
 	void inputHandling();
 	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
-	void DoCircleCollision();
+	void DoCircleCollision(float dt);
+	void setupObjects();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -54,8 +55,8 @@ private:
 
 	Vec2 LastMousePos;
 
-	float Federlaenge = 50.0f;
-	float Federkonstante = 25.0f;
+	float Federlaenge = 60.0f;
+	float Federkonstante = 30.0f;
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 20.0f;
 	float Reibungskoeffizient = 0.1f;
