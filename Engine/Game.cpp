@@ -28,9 +28,9 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd)
 {
-	m_circles.push_back(CircleObject(Vec2(50, 50), 15, Colors::Blue));
-	m_circles.push_back(CircleObject(Vec2(50, 100), 15, Colors::Red));
-	m_circles.push_back(CircleObject(Vec2(50, 150), 15, Colors::Green));
+	m_circles.push_back(CircleObject(Vec2(150, 50), 15, Colors::Blue));
+	m_circles.push_back(CircleObject(Vec2(100, 100), 15, Colors::Red));
+	m_circles.push_back(CircleObject(Vec2(100, 150), 15, Colors::Green));
 
 	//CreateMutualLink(&m_circles.at(0), &m_circles.at(1), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
@@ -107,6 +107,26 @@ void Game::UpdateModel()
 		for (auto& ii : m_circles)
 		{
 			ii.Update(dt);
+		}
+
+
+		//Ground and Wall
+		for (auto& ii : m_circles)
+		{
+			if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
+			{
+				ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
+				ii.m_v.y = 0.0f;
+
+				//ii.m_v *= pow(Reibungskoeffizient, dt);
+			}
+			if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
+			{
+				ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
+				ii.m_v.x = 0.0f;
+
+				//ii.m_v *= pow(Reibungskoeffizient, dt);
+			}
 		}
 	}
 }

@@ -58,6 +58,7 @@ private:
 	float Federkonstante = 25.0f;
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 20.0f;
+	float Reibungskoeffizient = 0.1f;
 
 	FrameTimer timer;
 

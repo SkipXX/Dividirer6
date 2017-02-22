@@ -64,18 +64,6 @@ void CircleObject::Update(float dt)
 {
 	Update_Links(dt);
 	m_pos += m_v * dt;
-
-	//Ground and Wall
-	if (m_pos.y > 580.0f - m_radius)
-	{
-		m_pos.y = 580.0f - m_radius;
-		m_v.y = 0.0f;
-	}
-	if (m_pos.x > 780 - m_radius)
-	{
-		m_pos.x = 780.0f - m_radius;
-		m_v.x = 0.0f;
-	}
 }
 
 void CircleObject::Update_Links(float dt)
