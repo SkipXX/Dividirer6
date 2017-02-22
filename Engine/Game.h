@@ -43,6 +43,7 @@ private:
 	/*  User Functions              */
 	void inputHandling();
 	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
+	void DoCircleCollision();
 	/********************************/
 private:
 	MainWindow& wnd;

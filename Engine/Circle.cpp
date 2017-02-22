@@ -33,6 +33,14 @@ void Circle::Move(Vec2 dv)
 	m_pos += dv;
 }
 
+bool Circle::IsOverlappingWith(Circle & cir) const
+{
+	float distance{(m_pos - cir.m_pos).GetLength()};
+
+	if (distance < m_radius + cir.m_radius) return true;
+	else return false;
+}
+
 
 
 

@@ -95,6 +95,8 @@ void Game::UpdateModel()
 			}
 		}
 
+		DoCircleCollision();
+
 		//Movement
 		for (auto& ii : m_circles)
 		{
@@ -121,7 +123,7 @@ void Game::ComposeFrame()
 	}
 
 	//Draws Ground
-	gfx.DrawRect(0,gfx.ScreenHeight - 20.0f,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
+	gfx.DrawRect(0,gfx.ScreenHeight - 20,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
 }
 
 void Game::inputHandling()
@@ -170,4 +172,22 @@ void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2, float c, float l
 {
 	C1->m_links.push_back(SpringLink(&(C2->m_pos), c, l));
 	C2->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
+}
+
+void Game::DoCircleCollision()
+{
+	for (auto& ii : m_circles)
+	{
+		for (auto& jj : m_circles)
+		{
+			if (&ii == &jj) continue;
+
+			if (ii.IsOverlappingWith(jj))
+			{
+				Vec2 distance_v = (jj.m_pos - ii.m_pos).Normalize();
+				ii.m_pos = jj.m_pos;
+				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius);
+			}
+		}
+	}
 }

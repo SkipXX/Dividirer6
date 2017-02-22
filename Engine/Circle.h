@@ -22,6 +22,7 @@ public:
 
 	virtual void Draw(Graphics& gfx) const;
 	virtual void Move(Vec2 dv);
+	bool IsOverlappingWith(Circle& cir) const;
 };
 
 
