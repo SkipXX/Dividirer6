@@ -28,10 +28,12 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd)
 {
-	m_circles.push_back(CircleObject(Vec2(200, 200), 15, Colors::Blue));
-	m_circles.push_back(CircleObject(Vec2(150, 150), 10, Colors::Red));
+	m_circles.push_back(CircleObject(Vec2(50, 50), 15, Colors::Blue));
+	m_circles.push_back(CircleObject(Vec2(50, 100), 10, Colors::Red));
+	m_circles.push_back(CircleObject(Vec2(50, 150), 10, Colors::Green));
 
 	m_circles.at(1).m_links.push_back(SpringLink(&(m_circles.at(0).m_pos), Federkonstante, Federlaenge));
+	m_circles.at(2).m_links.push_back(SpringLink(&(m_circles.at(1).m_pos), Federkonstante, Federlaenge));
 	//m_circles.at(1).m_v = Vec2(100, 100);
 }
 
@@ -69,29 +71,10 @@ void Game::UpdateModel()
 			}
 		}
 
-	//	//Feder shit
-	//	for (auto& ii : m_circles)
-	//	{
-	//		if (&ii == &m_circles.at(0)) continue;
-	//		
-	//		Vec2 distance_v = (ii.m_pos - m_circles.at(0).m_pos);
-	//		float distance = distance_v.GetLength();
-	//
-	//		if (distance > Federlaenge)
-	//		{
-	//			//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
-	//			ii.m_v -= distance_v.GetNormalized() * Federkonstante * 1 * (distance - Federlaenge) * dt;
-	//		}
-	//		if (distance < Federlaenge)
-	//		{
-	//			ii.m_v -= distance_v.GetNormalized() * Federkonstante * 4 * (distance - Federlaenge) * dt;
-	//		}
-	//	}
-	//
 		//Daempfung
 		for (auto& ii : m_circles)
 		{
-			ii.m_v *= pow(0.8f,dt);
+			ii.m_v *= pow(Daempfungsfaktor,dt);
 		}
 
 		//Gravitation
@@ -119,11 +102,18 @@ void Game::ComposeFrame()
 		ii.Draw(gfx);
 	}
 
+	//Draws all Links
 	for (auto& ii : m_circles)
 	{
-		if (&ii == &m_circles.at(0)) continue;
-		gfx.DrawLine(m_circles.at(0).m_pos,ii.m_pos);	
+		//if (&ii == &m_circles.at(0)) continue;
+		for (auto& jj : ii.m_links)
+		{
+			gfx.DrawLine(ii.m_pos, *(jj.linkedPoint));	
+		}
 	}
+
+	//Draws Ground
+	gfx.DrawRect(0,gfx.ScreenHeight - 20.0f,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
 }
 
 void Game::inputHandling()

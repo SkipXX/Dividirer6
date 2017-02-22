@@ -50,8 +50,9 @@ private:
 	/*  User Variables              */
 	std::vector<CircleObject> m_circles;
 
-	float Federlaenge = 100.0f;
+	float Federlaenge = 50.0f;
 	float Federkonstante = 20.0f;
+	float Daempfungsfaktor = 0.5f;
 
 	bool dragging = false;
 
