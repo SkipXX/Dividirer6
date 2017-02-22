@@ -68,6 +68,7 @@ void Game::UpdateModel()
 			{
 				dragging = true;
 				m_circles.at(0).m_pos = mousePos;
+				m_circles.at(0).m_v = Vec2(0, 0);
 			}
 		}
 
