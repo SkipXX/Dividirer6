@@ -42,13 +42,12 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	float dt = timer.Mark();
-
+	float dt = timer.Mark() * GameSpeed / float(Iterations);
+	assert(dt < 0.1f);
 	inputHandling();
-
-	if (!pause)
+	for (int nn = 0; nn < Iterations; nn++)
 	{
-		//Dragging
+		//Dragging 1/2
 		if (!wnd.mouse.LeftIsPressed())
 		{
 			for (auto& ii : m_circles)
@@ -62,83 +61,88 @@ void Game::UpdateModel()
 			}
 		}
 
-		if (wnd.mouse.LeftIsPressed())
+		if (!pause)
 		{
-			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
-
-			for (auto& ii : m_circles)
+			//Draggin 2/2
+			if (wnd.mouse.LeftIsPressed())
 			{
-				Vec2 distanceToCircle = (mousePos - ii.m_pos);
+				Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
 
-				if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
+				for (auto& ii : m_circles)
 				{
-					bool OnlyOne = true;
-					for (auto& jj : m_circles)
-					{
-						if (&ii == &jj) continue;
-						if (jj.dragging)
-						{
-							OnlyOne = false;
-							break;
-						}
-					}
-					if (OnlyOne)
-					{
-						ii.dragging = true;
-						ii.m_pos = mousePos;
-						ii.m_v = Vec2(0, 0);
-						LastMousePos = mousePos;
-					}
+					Vec2 distanceToCircle = (mousePos - ii.m_pos);
 
+					if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
+					{
+						bool OnlyOne = true;
+						for (auto& jj : m_circles)
+						{
+							if (&ii == &jj) continue;
+							if (jj.dragging)
+							{
+								OnlyOne = false;
+								break;
+							}
+						}
+						if (OnlyOne)
+						{
+							ii.dragging = true;
+							ii.m_pos = mousePos;
+							ii.m_v = Vec2(0, 0);
+							LastMousePos = mousePos;
+						}
+
+					}
 				}
 			}
-		}
 
-		//Daempfung
-		if (m_reibung)
-		{
+			//Daempfung
+			if (m_reibung)
+			{
+				for (auto& ii : m_circles)
+				{
+					ii.m_v *= pow(Daempfungsfaktor, dt);
+				}
+			}
+
+			//Gravitation
+			if (m_gravitation)
+			{
+				for (auto& ii : m_circles)
+				{
+					//if (&ii == &m_circles.at(0)) continue;
+					ii.m_v += Vec2(0, 600.0f) * dt;
+				}
+			}
+
+
+			//Movement
 			for (auto& ii : m_circles)
 			{
-				ii.m_v *= pow(Daempfungsfaktor,dt);
+				ii.Update(dt);
 			}
-		}
 
-		//Gravitation
-		if (m_gravitation)
-		{
+
+			//Ground and Wall
 			for (auto& ii : m_circles)
 			{
-				//if (&ii == &m_circles.at(0)) continue;
-				ii.m_v += Vec2(0,600.0f) * dt;
-			}
-		}
+				if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
+				{
+					ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
+					ii.m_v.y = 0.0f;
 
+					//ii.m_v *= pow(Reibungskoeffizient, dt);
+				}
+				if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
+				{
+					ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
+					ii.m_v.x = 0.0f;
 
-		//Movement
-		for (auto& ii : m_circles)
-		{
-			ii.Update(dt);
-		}
+					//ii.m_v *= pow(Reibungskoeffizient, dt);
+				}
 
-		//bounce BOUNCE
-		DoCircleCollision(dt);
-
-		//Ground and Wall
-		for (auto& ii : m_circles)
-		{
-			if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
-			{
-				ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
-				ii.m_v.y = 0.0f;
-
-				//ii.m_v *= pow(Reibungskoeffizient, dt);
-			}
-			if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
-			{
-				ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-				ii.m_v.x = 0.0f;
-
-				//ii.m_v *= pow(Reibungskoeffizient, dt);
+			//bounce BOUNCE
+			DoCircleCollision(dt);
 			}
 		}
 	}
@@ -195,6 +199,15 @@ void Game::ComposeFrame()
 		gfx.PutPixel(x + 1, y + 3, Colors::White);
 		gfx.PutPixel(x + 2, y + 3, Colors::White);
 		gfx.PutPixel(x + 2, y + 4, Colors::White);
+	}
+
+	//Drag Vector
+	for (auto& ii : m_circles)
+	{
+		if (ii.dragging)
+		{
+			gfx.DrawLine(ii.m_pos,Vec2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY()), Colors::Magenta);
+		}
 	}
 
 	//Draws Ground and Wall
@@ -290,8 +303,9 @@ void Game::DoCircleCollision(float dt)
 				ii.m_pos = jj.m_pos;
 				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius);
 				//its not quite physicly accurate but it kinda works
-				ii.m_v -= distance_v * jj.m_v.GetLengthSq() * 0.001f;
-				jj.m_v += distance_v * jj.m_v.GetLengthSq() * 0.001f;
+				float v = (jj.m_v.GetLength() + ii.m_v.GetLength()) / 2.0f;
+				ii.m_v -= distance_v * v * (1.0f / float(Iterations));
+				jj.m_v += distance_v * v * (1.0f / float(Iterations));
 			}
 		}
 	}
