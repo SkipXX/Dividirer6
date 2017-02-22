@@ -34,7 +34,10 @@ void Circle::Move(Vec2 dv)
 }
 
 
-/////////////////////////////
+
+
+
+///////CircleObject//////////
 
 CircleObject::CircleObject()
 	:
@@ -51,5 +54,25 @@ CircleObject::CircleObject(Vec2 pos, float radius, Color color)
 
 void CircleObject::Update(float dt)
 {
+	Update_Links(dt);
 	m_pos += m_v * dt;
+}
+
+void CircleObject::Update_Links(float dt)
+{
+	for (auto& ii : m_links)
+	{
+		Vec2 distance_v = (*(ii.linkedPoint) - m_pos);
+		float distance = distance_v.GetLength();
+
+		if (distance > ii.springLength)
+		{
+			//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
+			m_v += distance_v.GetNormalized() * ii.springConstant * 1 * (distance - ii.springLength) * dt;
+		}
+		if (distance < ii.springLength)
+		{
+			m_v += distance_v.GetNormalized() * ii.springConstant * 4 * (distance - ii.springLength) * dt;
+		}
+	}
 }

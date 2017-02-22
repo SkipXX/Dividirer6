@@ -3,6 +3,8 @@
 #include "Graphics.h"
 #include "Colors.h"
 
+#include "SpringLink.h"
+
 class Circle
 {
 private:
@@ -29,9 +31,12 @@ private:
 public:
 	Vec2 m_v = Vec2(0,0);
 
+	std::vector<SpringLink> m_links;
+
 public:
 	CircleObject();
 	CircleObject(Vec2 pos, float radius, Color color = Colors::White);
 	
 	void Update(float dt);
+	void Update_Links(float dt);
 };
