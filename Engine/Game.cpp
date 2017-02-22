@@ -56,19 +56,26 @@ void Game::UpdateModel()
 		//Dragging
 		if (!wnd.mouse.LeftIsPressed())
 		{
-			dragging = false;
+			for (auto& ii : m_circles)
+			{
+				ii.dragging = false;
+			}
 		}
 
 		if (wnd.mouse.LeftIsPressed())
 		{
 			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
 
-			Vec2 distanceToCircle = (mousePos - m_circles.at(0).m_pos);
-			if (dragging || distanceToCircle.GetLength() < m_circles.at(0).m_radius)
+			for (auto& ii : m_circles)
 			{
-				dragging = true;
-				m_circles.at(0).m_pos = mousePos;
-				m_circles.at(0).m_v = Vec2(0, 0);
+				Vec2 distanceToCircle = (mousePos - ii.m_pos);
+
+				if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
+				{
+					ii.dragging = true;
+					ii.m_pos = mousePos;
+					ii.m_v = Vec2(0, 0);
+				}
 			}
 		}
 

@@ -55,8 +55,6 @@ private:
 	float Federkonstante = 20.0f;
 	float Daempfungsfaktor = 0.5f;
 
-	bool dragging = false;
-
 	FrameTimer timer;
 
 	uint8_t inputBuffer = 0x0;

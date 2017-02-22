@@ -32,7 +32,7 @@ public:
 	Vec2 m_v = Vec2(0,0);
 
 	std::vector<SpringLink> m_links;
-	//bool dragging = false;
+	bool dragging = false;
 public:
 	CircleObject();
 	CircleObject(Vec2 pos, float radius, Color color = Colors::White);
