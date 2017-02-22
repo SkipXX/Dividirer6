@@ -194,6 +194,9 @@ void Game::DoCircleCollision()
 				Vec2 distance_v = (jj.m_pos - ii.m_pos).Normalize();
 				ii.m_pos = jj.m_pos;
 				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius);
+				//its not quite physicly accurate but it kinda works
+				ii.m_v -= distance_v * jj.m_v.GetLengthSq() * 0.001f;
+				jj.m_v += distance_v * jj.m_v.GetLengthSq() * 0.001f;
 			}
 		}
 	}

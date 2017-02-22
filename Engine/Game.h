@@ -55,7 +55,7 @@ private:
 	Vec2 LastMousePos;
 
 	float Federlaenge = 50.0f;
-	float Federkonstante = 20.0f;
+	float Federkonstante = 25.0f;
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 20.0f;
 
