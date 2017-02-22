@@ -29,12 +29,12 @@ Game::Game(MainWindow& wnd)
 	gfx(wnd)
 {
 	m_circles.push_back(CircleObject(Vec2(50, 50), 15, Colors::Blue));
-	m_circles.push_back(CircleObject(Vec2(50, 100), 10, Colors::Red));
-	m_circles.push_back(CircleObject(Vec2(50, 150), 10, Colors::Green));
+	m_circles.push_back(CircleObject(Vec2(50, 100), 15, Colors::Red));
+	m_circles.push_back(CircleObject(Vec2(50, 150), 15, Colors::Green));
 
-	CreateMutualLink(&m_circles.at(0), &m_circles.at(1), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(0), &m_circles.at(1), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
-	CreateMutualLink(&m_circles.at(0), &m_circles.at(2), Federkonstante, Federlaenge);
+	//CreateMutualLink(&m_circles.at(0), &m_circles.at(2), Federkonstante, Federlaenge);
 }
 
 void Game::Go()
@@ -58,7 +58,12 @@ void Game::UpdateModel()
 		{
 			for (auto& ii : m_circles)
 			{
-				ii.dragging = false;
+				if (ii.dragging)
+				{
+					ii.dragging = false;
+					ii.m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
+
+				}
 			}
 		}
 
@@ -75,6 +80,7 @@ void Game::UpdateModel()
 					ii.dragging = true;
 					ii.m_pos = mousePos;
 					ii.m_v = Vec2(0, 0);
+					LastMousePos = mousePos;
 				}
 			}
 		}
@@ -90,7 +96,7 @@ void Game::UpdateModel()
 		{
 			for (auto& ii : m_circles)
 			{
-				if (&ii == &m_circles.at(0)) continue;
+				//if (&ii == &m_circles.at(0)) continue;
 				ii.m_v += Vec2(0,600.0f) * dt;
 			}
 		}
