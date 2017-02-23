@@ -230,8 +230,9 @@ void Game::inputHandling()
 	}
 
 	//if RETURN is pressed (reset objects)
-	if (wnd.kbd.KeyIsPressed(VK_RETURN))
+	if (wnd.kbd.KeyIsPressed(VK_RETURN) && !(inputBuffer & 0x8))
 	{
+		setupObjects();
 		inputBuffer |= 0x8;
 	}
 
@@ -261,7 +262,6 @@ void Game::inputHandling()
 		// 0x8 = 'RETURN'-Key ... reset objects
 		if ((inputBuffer & 0x8) && !wnd.kbd.KeyIsPressed(VK_RETURN))
 		{
-			setupObjects();
 			inputBuffer &= ~0x8;
 		}
 	}
