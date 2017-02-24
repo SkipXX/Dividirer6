@@ -48,7 +48,7 @@ void Game::UpdateModel()
 	dt *= GameSpeed / float(Iterations);
 
 	//INPUT
-	inputHandling();
+	inputHandling(dt);
 
 	for (int nn = 0; nn < Iterations; nn++)
 	{
@@ -214,13 +214,48 @@ void Game::ComposeFrame()
 	gfx.DrawRect(gfx.ScreenWidth - 20, 0, gfx.ScreenWidth, gfx.ScreenHeight, Colors::Gray);
 }
 
-void Game::inputHandling()
-{
-	//Esc to exit ... NOT BUFFERED
+void Game::inputHandling(float dt)
+{	
+	/// NOT BUFFERED
+	//Esc to exit
 	if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
 	{
 		exit(1337);
 	}
+
+	if (!pause)
+	{
+		//continual movement
+		//if LEFT is pressed (move left)
+		if (wnd.kbd.KeyIsPressed(VK_LEFT))
+		{
+			m_circles.at(0).m_v.x -= moveSpeed * dt * Iterations;
+		}
+
+
+		//if right is pressed (move right)
+		if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+		{
+			m_circles.at(0).m_v.x += moveSpeed * dt * Iterations;
+		}
+
+
+		//if UP is pressed (move up)
+		if (wnd.kbd.KeyIsPressed(VK_UP))
+		{
+			m_circles.at(0).m_v.y -= moveSpeed * dt * Iterations;
+		}
+
+
+		//if DOWN is pressed (move down)
+		if (wnd.kbd.KeyIsPressed(VK_DOWN))
+		{
+			m_circles.at(0).m_v.y += moveSpeed * dt * Iterations;
+		}
+	}
+
+
+
 
 	///Options
 	//pause funktion
@@ -247,6 +282,38 @@ void Game::inputHandling()
 		setupObjects();
 		inputBuffer |= 0x8;
 	}
+
+	//if LEFT is pressed (move left)
+	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !(inputBuffer & 0x10))
+	{
+		m_circles.at(0).m_v.x -= moveSpeed;
+		inputBuffer |= 0x10;
+	}
+
+
+	//if right is pressed (move right)
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !(inputBuffer & 0x20))
+	{
+		m_circles.at(0).m_v.x += moveSpeed;
+		inputBuffer |= 0x20;
+	}
+
+
+	//if UP is pressed (move up)
+	if (wnd.kbd.KeyIsPressed(VK_UP) && !(inputBuffer & 0x40))
+	{
+		m_circles.at(0).m_v.y -= moveSpeed;
+		inputBuffer |= 0x40;
+	}
+
+
+	//if DOWN is pressed (move down)
+	if (wnd.kbd.KeyIsPressed(VK_DOWN) && !(inputBuffer & 0x80))
+	{
+		m_circles.at(0).m_v.y += moveSpeed;
+		inputBuffer |= 0x80;
+	}
+
 
 	if (inputBuffer)
 	{
@@ -275,6 +342,30 @@ void Game::inputHandling()
 		if ((inputBuffer & 0x8) && !wnd.kbd.KeyIsPressed(VK_RETURN))
 		{
 			inputBuffer &= ~0x8;
+		}
+
+		// 0x10 = 'LEFT'-Key ... move left
+		if ((inputBuffer & 0x10) && !wnd.kbd.KeyIsPressed(VK_LEFT))
+		{
+			inputBuffer &= ~0x10;
+		}
+
+		// 0x20 = 'RIGHT'-Key ... move right
+		if ((inputBuffer & 0x20) && !wnd.kbd.KeyIsPressed(VK_RIGHT))
+		{
+			inputBuffer &= ~0x20;
+		}
+
+		// 0x40 = 'UP'-Key ... move UP
+		if ((inputBuffer & 0x40) && !wnd.kbd.KeyIsPressed(VK_UP))
+		{
+			inputBuffer &= ~0x40;
+		}
+
+		// 0x80 = 'DOWN'-Key ... move down
+		if ((inputBuffer & 0x80) && !wnd.kbd.KeyIsPressed(VK_DOWN))
+		{
+			inputBuffer &= ~0x80;
 		}
 	}
 	///

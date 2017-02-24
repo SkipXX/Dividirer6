@@ -41,7 +41,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void inputHandling();
+	void inputHandling(float dt);
 	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
 	void DoCircleCollision(float dt);
 	void setupObjects();
@@ -64,6 +64,9 @@ private:
 	float WallBounceFaktor = 1.0f;
 	float GameSpeed = 1.0f;
 	int Iterations = 1000;
+
+	float moveSpeed = 500.0f;
+	CircleObject* moveAble = nullptr;
 
 	FrameTimer timer;
 
