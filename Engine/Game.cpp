@@ -42,9 +42,11 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	float dt = timer.Mark() * GameSpeed / float(Iterations);
+	float dt = timer.Mark();
 	assert(dt < 0.1f);
-	
+	if (dt > 0.1f) throw("ye");
+	dt *= GameSpeed / float(Iterations);
+
 	//INPUT
 	inputHandling();
 
@@ -137,6 +139,16 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	//BG
+	for (int xx = 0; xx < gfx.ScreenWidth; xx++)
+	{
+		for (int yy = 0; yy < gfx.ScreenHeight; yy++)
+		{
+			gfx.PutPixel(xx,yy,Color(30,30,30));
+		}
+	}
+
+	//Circles
 	for (auto& ii : m_circles)
 	{
 		ii.Draw(gfx);
@@ -193,7 +205,7 @@ void Game::ComposeFrame()
 	{
 		if (ii.dragging)
 		{
-			gfx.DrawLine(ii.m_pos,Vec2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY()), Colors::Magenta);
+			gfx.DrawLine(ii.m_pos,Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()), Colors::Magenta);
 		}
 	}
 
@@ -302,13 +314,13 @@ void Game::setupObjects()
 {
 	m_circles.clear();
 
-	m_circles.push_back(CircleObject(Vec2(250, 50), 15, Colors::Blue));		//0
-	m_circles.push_back(CircleObject(Vec2(200, 100), 15, Colors::Red));		//1
-	m_circles.push_back(CircleObject(Vec2(200, 150), 15, Colors::Green));	//2
-	m_circles.push_back(CircleObject(Vec2(250, 100), 15, Colors::Cyan));	//3
-	m_circles.push_back(CircleObject(Vec2(250, 150), 15, Colors::Gray));	//4
-	m_circles.push_back(CircleObject(Vec2(300, 100), 15, Colors::Magenta));	//5
-	m_circles.push_back(CircleObject(Vec2(400, 150), 15, Colors::Yellow));	//6
+	m_circles.push_back(CircleObject(Vec2(250, 50), 15, Colors::SoftBlue));		//0
+	m_circles.push_back(CircleObject(Vec2(200, 100), 15, Colors::SoftRed));		//1
+	m_circles.push_back(CircleObject(Vec2(200, 150), 15, Colors::SoftGreen));	//2
+	m_circles.push_back(CircleObject(Vec2(250, 100), 15, Colors::SoftCyan));	//3
+	m_circles.push_back(CircleObject(Vec2(250, 150), 15, Colors::Gray));		//4
+	m_circles.push_back(CircleObject(Vec2(300, 100), 15, Colors::SoftMagenta));	//5
+	m_circles.push_back(CircleObject(Vec2(400, 150), 15, Colors::SoftYellow));	//6
 
 
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
@@ -317,7 +329,7 @@ void Game::setupObjects()
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(3), Federkonstante, Federlaenge);
 	//CreateMutualLink(&m_circles.at(3), &m_circles.at(5), Federkonstante, Federlaenge);
 	//CreateMutualLink(&m_circles.at(4), &m_circles.at(6), Federkonstante, Federlaenge);
-	CreateMutualLink(&m_circles.at(5), &m_circles.at(6), Federkonstante, Federlaenge);
+	CreateMutualLink(&m_circles.at(5), &m_circles.at(6), Federkonstante, Federlaenge + 30);
 
 	CreateMutualLink(&m_circles.at(4), &m_circles.at(1), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(2), &m_circles.at(3), Federkonstante, Federlaenge);

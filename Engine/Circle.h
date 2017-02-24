@@ -40,4 +40,5 @@ public:
 	
 	void Update(float dt);
 	void Update_Links(float dt);
+	void Draw(Graphics & gfx) const;
 };
