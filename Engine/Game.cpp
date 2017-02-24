@@ -52,7 +52,7 @@ void Game::UpdateModel()
 
 	for (int nn = 0; nn < Iterations; nn++)
 	{
-		//Dragging 1/2
+		//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (!wnd.mouse.LeftIsPressed())
 		{
 			for (auto& ii : m_circles)
@@ -95,6 +95,8 @@ void Game::UpdateModel()
 							ii.m_pos = mousePos;
 							ii.m_v = Vec2(0, 0);
 							LastMousePos = mousePos;
+
+							thePossesed = &ii;
 						}
 
 					}
@@ -223,35 +225,36 @@ void Game::inputHandling(float dt)
 		exit(1337);
 	}
 
-	if (!pause)
+	if (!pause && thePossesed)
 	{
 		//continual movement
 		//if LEFT is pressed (move left)
 		if (wnd.kbd.KeyIsPressed(VK_LEFT))
 		{
-			m_circles.at(0).m_v.x -= moveSpeed * dt * Iterations;
+			thePossesed->m_v.x -= moveSpeed * dt * Iterations;
 		}
 
 
 		//if right is pressed (move right)
 		if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 		{
-			m_circles.at(0).m_v.x += moveSpeed * dt * Iterations;
+			thePossesed->m_v.x += moveSpeed * dt * Iterations;
 		}
 
 
 		//if UP is pressed (move up)
 		if (wnd.kbd.KeyIsPressed(VK_UP))
 		{
-			m_circles.at(0).m_v.y -= moveSpeed * dt * Iterations;
+			thePossesed->m_v.y -= moveSpeed * dt * Iterations;
 		}
 
 
 		//if DOWN is pressed (move down)
 		if (wnd.kbd.KeyIsPressed(VK_DOWN))
 		{
-			m_circles.at(0).m_v.y += moveSpeed * dt * Iterations;
-		}
+			thePossesed->m_v.y += moveSpeed * dt * Iterations;
+		} 
+	
 	}
 
 
@@ -283,35 +286,38 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x8;
 	}
 
-	//if LEFT is pressed (move left)
-	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !(inputBuffer & 0x10))
+	if (thePossesed)
 	{
-		m_circles.at(0).m_v.x -= moveSpeed;
-		inputBuffer |= 0x10;
-	}
+		//if LEFT is pressed (move left)
+		if (wnd.kbd.KeyIsPressed(VK_LEFT) && !(inputBuffer & 0x10))
+		{
+			thePossesed->m_v.x -= moveSpeed;
+			inputBuffer |= 0x10;
+		}
 
 
-	//if right is pressed (move right)
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !(inputBuffer & 0x20))
-	{
-		m_circles.at(0).m_v.x += moveSpeed;
-		inputBuffer |= 0x20;
-	}
+		//if right is pressed (move right)
+		if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !(inputBuffer & 0x20))
+		{
+			thePossesed->m_v.x += moveSpeed;
+			inputBuffer |= 0x20;
+		}
 
 
-	//if UP is pressed (move up)
-	if (wnd.kbd.KeyIsPressed(VK_UP) && !(inputBuffer & 0x40))
-	{
-		m_circles.at(0).m_v.y -= moveSpeed;
-		inputBuffer |= 0x40;
-	}
+		//if UP is pressed (move up)
+		if (wnd.kbd.KeyIsPressed(VK_UP) && !(inputBuffer & 0x40))
+		{
+			thePossesed->m_v.y -= moveSpeed;
+			inputBuffer |= 0x40;
+		}
 
 
-	//if DOWN is pressed (move down)
-	if (wnd.kbd.KeyIsPressed(VK_DOWN) && !(inputBuffer & 0x80))
-	{
-		m_circles.at(0).m_v.y += moveSpeed;
-		inputBuffer |= 0x80;
+		//if DOWN is pressed (move down)
+		if (wnd.kbd.KeyIsPressed(VK_DOWN) && !(inputBuffer & 0x80))
+		{
+			thePossesed->m_v.y += moveSpeed;
+			inputBuffer |= 0x80;
+		}
 	}
 
 

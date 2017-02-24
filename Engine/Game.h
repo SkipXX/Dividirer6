@@ -66,7 +66,7 @@ private:
 	int Iterations = 1000;
 
 	float moveSpeed = 500.0f;
-	CircleObject* moveAble = nullptr;
+	CircleObject* thePossesed = nullptr;
 
 	FrameTimer timer;
 
