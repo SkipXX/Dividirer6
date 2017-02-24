@@ -63,7 +63,7 @@ private:
 	float Reibungskoeffizient = 0.1f;
 	float WallBounceFaktor = 1.0f;
 	float GameSpeed = 1.0f;
-	int Iterations = 100;
+	int Iterations = 1000;
 
 	FrameTimer timer;
 

@@ -290,21 +290,29 @@ void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,float c, float l)
 
 void Game::DoCircleCollision(float dt)
 {
+
 	for (auto& ii : m_circles)
 	{
+		//TESTCODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (ii.m_v.x > 50000.0f) pause = true; 
+		////////////////////////////////////////////
 		for (auto& jj : m_circles)
 		{
 			if (&ii == &jj) continue;
 
 			if (ii.IsOverlappingWith(jj))
 			{
-				Vec2 distance_v = (jj.m_pos - ii.m_pos).Normalize();
-				ii.m_pos = jj.m_pos;
-				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius);
+				Vec2 distance_v = (jj.m_pos - ii.m_pos);
+				ii.m_pos += (jj.m_pos - ii.m_pos) * 0.5f;
+				jj.m_pos = ii.m_pos;
+				distance_v.Normalize();
+
+				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius) * 0.5f;
+				jj.m_pos += distance_v * (ii.m_radius + jj.m_radius) * 0.5f;
 				//its not quite physicly accurate but it kinda works
 				float v = (jj.m_v.GetLength() + ii.m_v.GetLength()) / 2.0f;
-				ii.m_v -= distance_v * v * (1.0f / float(Iterations));
-				jj.m_v += distance_v * v * (1.0f / float(Iterations));
+				ii.m_v -= distance_v * v * 0.05f;
+				jj.m_v += distance_v * v * 0.05f;
 			}
 		}
 	}
@@ -321,14 +329,15 @@ void Game::setupObjects()
 	m_circles.push_back(CircleObject(Vec2(250, 150), 15, Colors::Gray));		//4
 	m_circles.push_back(CircleObject(Vec2(300, 100), 15, Colors::SoftMagenta));	//5
 	m_circles.push_back(CircleObject(Vec2(400, 150), 15, Colors::SoftYellow));	//6
+	m_circles.push_back(CircleObject(Vec2(500, 150), 15, Colors::SoftWhite));	//7
 
 
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(2), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(2), &m_circles.at(4), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(3), &m_circles.at(4), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(1), &m_circles.at(3), Federkonstante, Federlaenge);
-	//CreateMutualLink(&m_circles.at(3), &m_circles.at(5), Federkonstante, Federlaenge);
-	//CreateMutualLink(&m_circles.at(4), &m_circles.at(6), Federkonstante, Federlaenge);
+		//CreateMutualLink(&m_circles.at(3), &m_circles.at(5), Federkonstante, Federlaenge);
+		//CreateMutualLink(&m_circles.at(4), &m_circles.at(6), Federkonstante, Federlaenge);
 	CreateMutualLink(&m_circles.at(5), &m_circles.at(6), Federkonstante, Federlaenge + 30);
 
 	CreateMutualLink(&m_circles.at(4), &m_circles.at(1), Federkonstante, Federlaenge);
