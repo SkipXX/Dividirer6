@@ -331,14 +331,14 @@ void Game::DoWallCollision()
 		if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
 		{
 			ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
-			ii.m_v.y = 0.0f;
+			ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
 		if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
 		{
 			ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-			ii.m_v.x = 0.0f;
+			ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}

@@ -61,6 +61,7 @@ private:
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 20.0f;
 	float Reibungskoeffizient = 0.1f;
+	float WallBounceFaktor = 1.0f;
 	float GameSpeed = 1.0f;
 	int Iterations = 100;
 
