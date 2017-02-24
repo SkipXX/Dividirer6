@@ -43,8 +43,11 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	float dt = timer.Mark();
-	assert(dt < 0.1f);
-	if (dt > 0.1f) throw("ye");
+	
+	//for testing
+	//assert(dt < 0.1f);
+	//if (dt > 0.1f) throw("ye");
+	
 	dt *= GameSpeed / float(Iterations);
 
 	//INPUT
@@ -149,6 +152,9 @@ void Game::ComposeFrame()
 			gfx.PutPixel(xx,yy,Color(30,30,30));
 		}
 	}
+
+	//thePossesed
+	if(thePossesed) DrawPossesed();
 
 	//Circles
 	for (auto& ii : m_circles)
@@ -461,4 +467,21 @@ void Game::DoWallCollision()
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
 	}
+}
+
+void Game::DrawPossesed()
+{
+	if (thePossesed == nullptr) return;
+
+	//white circle
+	gfx.DrawCircle(thePossesed->m_pos.x, thePossesed->m_pos.y, thePossesed->m_radius + 2, Colors::SoftWhite);
+
+
+	//wierd lines
+	//int ScheifAnzahl = 30;
+	//
+	//for (int ii = 0; ii < ScheifAnzahl; ii++)
+	//{
+	//	gfx.DrawLine(thePossesed->m_pos, thePossesed->m_pos + Vec2(float(rand() % 44 - 22), float(rand() % 44 - 22)), Colors::SoftWhite);
+	//}
 }

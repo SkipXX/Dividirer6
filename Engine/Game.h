@@ -46,6 +46,7 @@ private:
 	void DoCircleCollision(float dt);
 	void setupObjects();
 	void DoWallCollision();
+	void DrawPossesed();
 	/********************************/
 private:
 	MainWindow& wnd;
