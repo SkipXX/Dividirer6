@@ -75,16 +75,10 @@ void CircleObject::Update_Links(float dt)
 	{
 		Vec2 distance_v = (*(ii.linkedPoint) - m_pos);
 		float distance = distance_v.GetLength();
-
-		if (distance > ii.springLength)
-		{
-			//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
-			m_v += distance_v.GetNormalized() * ii.springConstant * MY_INNENKONSTANTE * (distance - ii.springLength) * dt;
-		}
-		if (distance < ii.springLength)
-		{
-			m_v += distance_v.GetNormalized() * ii.springConstant * MY_AUSSENKONSTANTE * (distance - ii.springLength) * dt;
-		}
+		
+		//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
+		m_v += distance_v.GetNormalized() * ii.springConstant * MY_INNENKONSTANTE * (distance - ii.springLength) * dt;
+		
 	}
 }
 
