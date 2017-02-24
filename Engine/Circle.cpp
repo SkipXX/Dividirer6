@@ -94,3 +94,41 @@ void CircleObject::Draw(Graphics& gfx) const
 				m_color.GetB() + 60 < 255 ? m_color.GetB() + 60 : 255));
 }
 
+void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
+{
+	for (auto& ii : objects)
+	{
+		if (&ii == this) continue;
+
+		bool found = false;
+
+		for(auto& jj : ii.m_links)
+		{
+			if (jj.linkedPoint == &m_pos)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+		{
+			std::vector<SpringLink> temp;
+
+			for (auto& jj : ii.m_links)
+			{
+				if (!(jj.linkedPoint == &m_pos))
+				{
+					temp.push_back(jj);
+				}
+			}
+
+			ii.m_links = temp;
+		}
+	}
+}
+
+void CircleObject::RemoveLinksFROM()
+{
+	m_links.clear();
+}

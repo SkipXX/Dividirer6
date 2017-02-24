@@ -474,7 +474,7 @@ void Game::DrawPossesed()
 	if (thePossesed == nullptr) return;
 
 	//white circle
-	gfx.DrawCircle(thePossesed->m_pos.x, thePossesed->m_pos.y, thePossesed->m_radius + 2, Colors::SoftWhite);
+	gfx.DrawCircle((float)thePossesed->m_pos.x, (float)thePossesed->m_pos.y, int(thePossesed->m_radius) + 2, Colors::SoftWhite);
 
 
 	//wierd lines

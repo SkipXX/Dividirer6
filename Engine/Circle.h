@@ -37,8 +37,13 @@ public:
 public:
 	CircleObject();
 	CircleObject(Vec2 pos, float radius, Color color = Colors::White);
+	~CircleObject() = default;
 	
 	void Update(float dt);
 	void Update_Links(float dt);
 	void Draw(Graphics & gfx) const;
+
+	void RemoveLinksTO(std::vector<CircleObject>& objects);
+
+	void RemoveLinksFROM();
 };
