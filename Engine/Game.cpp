@@ -53,6 +53,23 @@ void Game::UpdateModel()
 	//INPUT
 	inputHandling(dt);
 
+	//possesed select even in pause
+	if (pause && wnd.mouse.LeftIsPressed())
+	{
+		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+		for (auto& ii : m_circles)
+		{
+			Vec2 distanceToCircle = (mousePos - ii.m_pos);
+
+			if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
+			{
+				thePossesed = &ii;
+			}
+
+		}
+	}
+	
+
 	for (int nn = 0; nn < Iterations; nn++)
 	{
 		//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -142,6 +159,8 @@ void Game::UpdateModel()
 	}
 }
 
+
+
 void Game::ComposeFrame()
 {
 	//BG
@@ -222,6 +241,25 @@ void Game::ComposeFrame()
 	gfx.DrawRect(gfx.ScreenWidth - 20, 0, gfx.ScreenWidth, gfx.ScreenHeight, Colors::Gray);
 }
 
+void Game::DrawPossesed()
+{
+	if (thePossesed == nullptr) return;
+
+	//white circle
+	gfx.DrawCircle((int)thePossesed->m_pos.x, (int)thePossesed->m_pos.y, int(thePossesed->m_radius) + 2, Colors::SoftWhite);
+
+
+	//wierd lines
+	//int ScheifAnzahl = 30;
+	//
+	//for (int ii = 0; ii < ScheifAnzahl; ii++)
+	//{
+	//	gfx.DrawLine(thePossesed->m_pos, thePossesed->m_pos + Vec2(float(rand() % 44 - 22), float(rand() % 44 - 22)), Colors::SoftWhite);
+	//}
+}
+
+
+
 void Game::inputHandling(float dt)
 {	
 	/// NOT BUFFERED
@@ -231,6 +269,19 @@ void Game::inputHandling(float dt)
 		exit(1337);
 	}
 
+	//delete the possesed
+	if (wnd.kbd.KeyIsPressed(VK_DELETE) && thePossesed)
+	{
+		//thePossesed->RemoveLinksTO(m_circles);
+		//thePossesed->RemoveLinksFROM();
+
+		DeleteObject(thePossesed);
+
+		thePossesed = nullptr;
+	}
+
+
+	//Movement
 	if (!pause && thePossesed)
 	{
 		//continual movement
@@ -383,6 +434,8 @@ void Game::inputHandling(float dt)
 	///
 }
 
+
+
 void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,float c, float l)
 {
 	assert(C1 != C2);
@@ -447,7 +500,6 @@ void Game::setupObjects()
 	CreateMutualLink(&m_circles.at(2), &m_circles.at(3), Federkonstante, Federlaenge);
 }
 
-
 void Game::DoWallCollision()
 {
 	for (auto& ii : m_circles)
@@ -469,19 +521,17 @@ void Game::DoWallCollision()
 	}
 }
 
-void Game::DrawPossesed()
+void Game::DeleteObject(CircleObject* obj)
 {
-	if (thePossesed == nullptr) return;
+	obj->RemoveLinksTO(m_circles);
 
-	//white circle
-	gfx.DrawCircle((float)thePossesed->m_pos.x, (float)thePossesed->m_pos.y, int(thePossesed->m_radius) + 2, Colors::SoftWhite);
-
-
-	//wierd lines
-	//int ScheifAnzahl = 30;
-	//
-	//for (int ii = 0; ii < ScheifAnzahl; ii++)
+	//does not work because of Links that point at objects
+	//std::vector<CircleObject>::iterator it;
+	//for (it = m_circles.begin(); it != m_circles.end(); it++)
 	//{
-	//	gfx.DrawLine(thePossesed->m_pos, thePossesed->m_pos + Vec2(float(rand() % 44 - 22), float(rand() % 44 - 22)), Colors::SoftWhite);
+	//	if(&(it->m_pos) == &(obj->m_pos))break;
 	//}
+	//m_circles.erase(it);
+
+	*obj = CircleObject();
 }

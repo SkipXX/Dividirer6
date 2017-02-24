@@ -47,6 +47,8 @@ private:
 	void setupObjects();
 	void DoWallCollision();
 	void DrawPossesed();
+
+	void DeleteObject(CircleObject * obj);
 	/********************************/
 private:
 	MainWindow& wnd;
