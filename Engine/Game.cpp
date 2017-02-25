@@ -151,7 +151,7 @@ void Game::UpdateModel()
 
 
 			//Ground and Wall
-			DoWallCollision();
+			DoWallCollision(dt);
 
 			//bounce BOUNCE
 			DoCircleCollision(dt);
@@ -500,21 +500,23 @@ void Game::setupObjects()
 	CreateMutualLink(&m_circles.at(2), &m_circles.at(3), Federkonstante, Federlaenge);
 }
 
-void Game::DoWallCollision()
+void Game::DoWallCollision(float dt)
 {
 	for (auto& ii : m_circles)
 	{
 		if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
 		{
-			ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
-			ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
+			//ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
+			//ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
+			ii.m_v += Vec2(0.0f, -10000.0f) * dt * (ii.m_pos.y + ii.m_radius - (gfx.ScreenHeight - 20));
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
 		if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
 		{
-			ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-			ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
+			//ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
+			//ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
+			ii.m_v += Vec2(-10000.0f, 0.0f) * dt * (ii.m_pos.x + ii.m_radius - (gfx.ScreenWidth - 20));
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
