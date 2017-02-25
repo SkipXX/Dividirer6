@@ -35,43 +35,27 @@ Game::Game(MainWindow& wnd)
 void Game::Go()
 {
 	gfx.BeginFrame();	
-	UpdateModel();
-	ComposeFrame();
-	gfx.EndFrame();
-}
 
-void Game::UpdateModel()
-{
 	float dt = timer.Mark();
-	
 	//for testing
 	//assert(dt < 0.1f);
 	//if (dt > 0.1f) throw("ye");
-	
 	dt *= GameSpeed / float(Iterations);
 
 	//INPUT
 	inputHandling(dt);
 
-	//possesed select even in pause
-	if (pause && wnd.mouse.LeftIsPressed())
-	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
-		for (auto& ii : m_circles)
-		{
-			Vec2 distanceToCircle = (mousePos - ii.m_pos);
-
-			if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
-			{
-				thePossesed = &ii;
-			}
-
-		}
-	}
-	
-
 	for (int nn = 0; nn < Iterations; nn++)
 	{
+		UpdateModel(dt);
+	}
+	ComposeFrame();
+	gfx.EndFrame();
+}
+
+void Game::UpdateModel(float dt)
+{
+	
 		//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (!wnd.mouse.LeftIsPressed())
 		{
@@ -157,7 +141,7 @@ void Game::UpdateModel()
 			DoCircleCollision(dt);
 		}
 	}
-}
+
 
 
 
@@ -262,6 +246,22 @@ void Game::DrawPossesed()
 
 void Game::inputHandling(float dt)
 {	
+	//possesed select even in pause
+	if (pause && wnd.mouse.LeftIsPressed())
+	{
+		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+		for (auto& ii : m_circles)
+		{
+			Vec2 distanceToCircle = (mousePos - ii.m_pos);
+
+			if (ii.dragging || distanceToCircle.GetLength() < ii.m_radius)
+			{
+				thePossesed = &ii;
+			}
+
+		}
+	}
+
 	/// NOT BUFFERED
 	//Esc to exit
 	if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
