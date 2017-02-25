@@ -359,6 +359,22 @@ void Graphics::DrawCircle( int x,int y,int radius,Color c )
 	}
 }
 
+void Graphics::DrawEllipse(int x, int y, int radius, Color c)
+{
+	const int rad_sq = radius * radius;
+	for (int y_loop = y - radius + 1; y_loop < y + radius; y_loop++)
+	{
+		for (int x_loop = x - radius + 1; x_loop < x + radius; x_loop++)
+		{
+			const int x_diff = x - x_loop;
+			const int y_diff = y - y_loop;
+			if (x_diff * x_diff + y_diff * y_diff / 0.5 <= rad_sq)
+			{
+				PutPixel(x_loop, y_loop, c);
+			}
+		}
+	}
+}
 
 ///
 void Graphics::DrawLine(Vec2 p_1, Vec2 p_2, Color color)

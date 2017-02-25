@@ -84,14 +84,28 @@ void CircleObject::Update_Links(double dt)
 
 void CircleObject::Draw(Graphics& gfx) const
 {
-	gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius), Colors::Black);
-	gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius - 2), m_color);
+	if (m_pos.y - 1 > gfx.ScreenHeight - 20 - m_radius)
+	{
+		gfx.DrawEllipse(int(m_pos.x), int(m_pos.y), int(m_radius), Colors::Black);
+		gfx.DrawEllipse(int(m_pos.x), int(m_pos.y), int(m_radius - 2), m_color);
 
 
-	gfx.DrawCircle(int(m_pos.x + m_radius/4), int(m_pos.y - m_radius/4), int(m_radius / 3),
-		Color(	m_color.GetR() + 60 < 255 ? m_color.GetR() + 60 : 255,
+		gfx.DrawEllipse(int(m_pos.x + m_radius / 4), int(m_pos.y - m_radius / 4), int(m_radius / 3),
+			Color(m_color.GetR() + 60 < 255 ? m_color.GetR() + 60 : 255,
 				m_color.GetG() + 60 < 255 ? m_color.GetG() + 60 : 255,
 				m_color.GetB() + 60 < 255 ? m_color.GetB() + 60 : 255));
+	}
+	else
+	{
+		gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius), Colors::Black);
+		gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius - 2), m_color);
+
+
+		gfx.DrawCircle(int(m_pos.x + m_radius / 4), int(m_pos.y - m_radius / 4), int(m_radius / 3),
+			Color(m_color.GetR() + 60 < 255 ? m_color.GetR() + 60 : 255,
+				m_color.GetG() + 60 < 255 ? m_color.GetG() + 60 : 255,
+				m_color.GetB() + 60 < 255 ? m_color.GetB() + 60 : 255));
+	}
 }
 
 void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
