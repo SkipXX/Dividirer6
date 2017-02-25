@@ -343,6 +343,7 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x8;
 	}
 
+	//possesed movement (jump)
 	if (thePossesed)
 	{
 		//if LEFT is pressed (move left)
@@ -477,6 +478,7 @@ void Game::DoCircleCollision(float dt)
 void Game::setupObjects()
 {
 	m_circles.clear();
+	thePossesed = nullptr;
 
 	m_circles.push_back(CircleObject(Vec2(250, 50), 15, Colors::SoftBlue));		//0
 	m_circles.push_back(CircleObject(Vec2(200, 100), 15, Colors::SoftRed));		//1
