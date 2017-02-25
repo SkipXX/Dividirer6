@@ -364,6 +364,8 @@ void Graphics::DrawCircle( int x,int y,int radius,Color c )
 void Graphics::DrawLine(Vec2 p_1, Vec2 p_2, Color color)
 {
 	std::vector<Vec2> line_points;
+	line_points.reserve(300);
+
 	const Vec2 line_direction = (p_2 - p_1).Normalize();
 	float lenght = (p_2 - p_1).GetLength();
 
