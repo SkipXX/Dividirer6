@@ -11,13 +11,13 @@ private:
 
 public:
 	Vec2 m_pos;
-	double m_radius;
+	float m_radius;
 
 	Color m_color;
 
 public:
 	Circle();
-	Circle(Vec2 pos, double radius, Color color = Colors::White);
+	Circle(Vec2 pos, float radius, Color color = Colors::White);
 	~Circle();
 
 	virtual void Draw(Graphics& gfx) const;
@@ -36,11 +36,11 @@ public:
 	bool dragging = false;
 public:
 	CircleObject();
-	CircleObject(Vec2 pos, double radius, Color color = Colors::White);
+	CircleObject(Vec2 pos, float radius, Color color = Colors::White);
 	~CircleObject() = default;
 	
-	void Update(double dt);
-	void Update_Links(double dt);
+	void Update(float dt);
+	void Update_Links(float dt);
 	void Draw(Graphics & gfx) const;
 
 	void RemoveLinksTO(std::vector<CircleObject>& objects);

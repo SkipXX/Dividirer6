@@ -6,7 +6,7 @@ SpringLink::SpringLink()
 {
 }
 
-SpringLink::SpringLink(Vec2 * p, double c, double l)
+SpringLink::SpringLink(Vec2 * p, float c, float l)
 	:
 	linkedPoint(p),
 	springConstant(c),

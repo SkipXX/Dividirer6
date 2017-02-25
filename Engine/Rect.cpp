@@ -10,7 +10,7 @@ Rect::Rect()
 	m_bottom = 0;
 }
 
-Rect::Rect(double left, double right, double top, double bottom)
+Rect::Rect(float left, float right, float top, float bottom)
 	:
 	m_left(left),
 	m_right(right),
@@ -25,7 +25,7 @@ Rect::Rect(Vec2 left_top, Vec2 right_bottom)
 {
 }
 
-Rect::Rect(Vec2 left_top, double width, double height)
+Rect::Rect(Vec2 left_top, float width, float height)
 	:
 	Rect(left_top, left_top + Vec2(width, height))
 {
@@ -39,7 +39,7 @@ Rect::~Rect()
 
 
 //this is kinda problematic as halfWidth is NOT half the width but: width = 2*halfWidth + 1
-Rect Rect::fromMiddle(Vec2 middle, double halfWidth, double halfHeight)
+Rect Rect::fromMiddle(Vec2 middle, float halfWidth, float halfHeight)
 {
 	return Rect(middle.x - halfWidth, middle.x + halfWidth, middle.y - halfHeight, middle.y + halfHeight);
 }
@@ -58,15 +58,15 @@ void Rect::move(const Vec2& dv)
 	m_top += dv.y;
 	m_bottom += dv.y;
 }
-void Rect::move(double dx, double dy)
+void Rect::move(float dx, float dy)
 {
 	move(Vec2(dx, dy));
 }
 
 void Rect::moveTo(const Vec2 & left_top)
 {
-	double width = m_right - m_left;
-	double height = m_bottom - m_top;
+	float width = m_right - m_left;
+	float height = m_bottom - m_top;
 	m_left = left_top.x;
 	m_top = left_top.y;
 

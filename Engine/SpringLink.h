@@ -7,14 +7,14 @@ class CircleObject;
 class SpringLink
 {
 public:
-	double springConstant = 1.0f;
-	double springLength = 1.0f;
+	float springConstant = 1.0f;
+	float springLength = 1.0f;
 
 	Vec2* linkedPoint;
 
 public:
 	SpringLink();
-	SpringLink(Vec2* p, double springConstant, double springLength);
+	SpringLink(Vec2* p, float springConstant, float springLength);
 	~SpringLink();
 };
 

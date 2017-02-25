@@ -13,7 +13,7 @@ Circle::Circle()
 {
 }
 
-Circle::Circle(Vec2 pos, double radius, Color color)
+Circle::Circle(Vec2 pos, float radius, Color color)
 	:
 	m_pos(pos),
 	m_radius(radius),
@@ -38,7 +38,7 @@ void Circle::Move(Vec2 dv)
 
 bool Circle::IsOverlappingWith(Circle & cir) const
 {
-	double distance{(m_pos - cir.m_pos).GetLength()};
+	float distance{(m_pos - cir.m_pos).GetLength()};
 
 	if (distance < m_radius + cir.m_radius) return true;
 	else return false;
@@ -56,25 +56,25 @@ CircleObject::CircleObject()
 {
 }
 
-CircleObject::CircleObject(Vec2 pos, double radius, Color color)
+CircleObject::CircleObject(Vec2 pos, float radius, Color color)
 	:
 	Circle(pos, radius, color)
 {
 }
 
 
-void CircleObject::Update(double dt)
+void CircleObject::Update(float dt)
 {
 	Update_Links(dt);
 	m_pos += m_v * dt;
 }
 
-void CircleObject::Update_Links(double dt)
+void CircleObject::Update_Links(float dt)
 {
 	for (auto& ii : m_links)
 	{
 		Vec2 distance_v = (*(ii.linkedPoint) - m_pos);
-		double distance = distance_v.GetLength();
+		float distance = distance_v.GetLength();
 		
 		//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
 		m_v += distance_v.GetNormalized() * ii.springConstant * MY_INNENKONSTANTE * (distance - ii.springLength) * dt;

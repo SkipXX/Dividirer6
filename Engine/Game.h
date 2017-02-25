@@ -41,11 +41,11 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void inputHandling(double dt);
-	void CreateMutualLink(CircleObject * C1, CircleObject * C2, double c, double l);
-	void DoCircleCollision(double dt);
+	void inputHandling(float dt);
+	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
+	void DoCircleCollision(float dt);
 	void setupObjects();
-	void DoWallCollision(double dt);
+	void DoWallCollision();
 	void DrawPossesed();
 
 	void DeleteObject(CircleObject * obj);
@@ -59,16 +59,16 @@ private:
 
 	Vec2 LastMousePos;
 
-	double Federlaenge = 50.0f;
-	double Federkonstante = 300.0f;
-	double Daempfungsfaktor = 0.5f;
-	double ThrowingStrenght = 20.0f;
-	double Reibungskoeffizient = 0.1f;
-	double WallBounceFaktor = 1.0f;
-	double GameSpeed = 1.0f;
+	float Federlaenge = 50.0f;
+	float Federkonstante = 300.0f;
+	float Daempfungsfaktor = 0.5f;
+	float ThrowingStrenght = 20.0f;
+	float Reibungskoeffizient = 0.1f;
+	float WallBounceFaktor = 1.0f;
+	float GameSpeed = 1.0f;
 	int Iterations = 1000;
 
-	double moveSpeed = 500.0f;
+	float moveSpeed = 500.0f;
 	CircleObject* thePossesed = nullptr;
 
 	FrameTimer timer;
