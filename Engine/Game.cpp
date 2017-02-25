@@ -18,6 +18,7 @@
  *	You should have received a copy of the GNU General Public License					  *
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
+
 #include "MainWindow.h"
 #include "Game.h"
 
@@ -42,13 +43,13 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	float dt = timer.Mark();
+	double dt = timer.Mark();
 	
 	//for testing
 	//assert(dt < 0.1f);
 	//if (dt > 0.1f) throw("ye");
 	
-	dt *= GameSpeed / float(Iterations);
+	dt *= GameSpeed / double(Iterations);
 
 	//INPUT
 	inputHandling(dt);
@@ -56,7 +57,7 @@ void Game::UpdateModel()
 	//possesed select even in pause
 	if (pause && wnd.mouse.LeftIsPressed())
 	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+		Vec2 mousePos = Vec2(double(wnd.mouse.GetPosX()), double(wnd.mouse.GetPosY()));
 		for (auto& ii : m_circles)
 		{
 			Vec2 distanceToCircle = (mousePos - ii.m_pos);
@@ -80,7 +81,7 @@ void Game::UpdateModel()
 				if (ii.dragging)
 				{
 					ii.dragging = false;
-					ii.m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
+					ii.m_v += (Vec2(double(wnd.mouse.GetPosX()), double(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
 
 				}
 			}
@@ -91,7 +92,7 @@ void Game::UpdateModel()
 			//Draggin 2/2
 			if (wnd.mouse.LeftIsPressed())
 			{
-				Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+				Vec2 mousePos = Vec2(double(wnd.mouse.GetPosX()), double(wnd.mouse.GetPosY()));
 
 				for (auto& ii : m_circles)
 				{
@@ -151,7 +152,7 @@ void Game::UpdateModel()
 
 
 			//Ground and Wall
-			DoWallCollision();
+			DoWallCollision(dt);
 
 			//bounce BOUNCE
 			DoCircleCollision(dt);
@@ -232,7 +233,7 @@ void Game::ComposeFrame()
 	{
 		if (ii.dragging)
 		{
-			gfx.DrawLine(ii.m_pos,Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()), Colors::Magenta);
+			gfx.DrawLine(ii.m_pos,Vec2((double)wnd.mouse.GetPosX(), (double)wnd.mouse.GetPosY()), Colors::Magenta);
 		}
 	}
 
@@ -254,13 +255,13 @@ void Game::DrawPossesed()
 	//
 	//for (int ii = 0; ii < ScheifAnzahl; ii++)
 	//{
-	//	gfx.DrawLine(thePossesed->m_pos, thePossesed->m_pos + Vec2(float(rand() % 44 - 22), float(rand() % 44 - 22)), Colors::SoftWhite);
+	//	gfx.DrawLine(thePossesed->m_pos, thePossesed->m_pos + Vec2(double(rand() % 44 - 22), double(rand() % 44 - 22)), Colors::SoftWhite);
 	//}
 }
 
 
 
-void Game::inputHandling(float dt)
+void Game::inputHandling(double dt)
 {	
 	/// NOT BUFFERED
 	//Esc to exit
@@ -436,7 +437,7 @@ void Game::inputHandling(float dt)
 
 
 
-void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,float c, float l)
+void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,double c, double l)
 {
 	assert(C1 != C2);
 	if (C1 == C2) return;
@@ -444,7 +445,7 @@ void Game::CreateMutualLink(CircleObject* C1, CircleObject* C2,float c, float l)
 	C2->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
 }
 
-void Game::DoCircleCollision(float dt)
+void Game::DoCircleCollision(double dt)
 {
 
 	for (auto& ii : m_circles)
@@ -466,7 +467,7 @@ void Game::DoCircleCollision(float dt)
 				ii.m_pos -= distance_v * (ii.m_radius + jj.m_radius) * 0.5f;
 				jj.m_pos += distance_v * (ii.m_radius + jj.m_radius) * 0.5f;
 				//its not quite physicly accurate but it kinda works
-				float v = (jj.m_v.GetLength() + ii.m_v.GetLength()) / 2.0f;
+				double v = (jj.m_v.GetLength() + ii.m_v.GetLength()) / 2.0f;
 				ii.m_v -= distance_v * v * 0.05f;
 				jj.m_v += distance_v * v * 0.05f;
 			}
@@ -500,21 +501,23 @@ void Game::setupObjects()
 	CreateMutualLink(&m_circles.at(2), &m_circles.at(3), Federkonstante, Federlaenge);
 }
 
-void Game::DoWallCollision()
+void Game::DoWallCollision(double dt)
 {
 	for (auto& ii : m_circles)
 	{
 		if (ii.m_pos.y > gfx.ScreenHeight - 20 - ii.m_radius)
 		{
-			ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
-			ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
+			//ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
+			//ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
+			ii.m_v += Vec2(0.0f,-10000.0f) * dt * (ii.m_pos.y + ii.m_radius - (gfx.ScreenHeight - 20));
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
 		if (ii.m_pos.x > gfx.ScreenWidth - 20 - ii.m_radius)
 		{
-			ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-			ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
+			//ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
+			//ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
+			ii.m_v += Vec2(-10000.0f, 0.0f) * dt * (ii.m_pos.x + ii.m_radius - (gfx.ScreenWidth - 20));
 
 			//ii.m_v *= pow(Reibungskoeffizient, dt);
 		}
