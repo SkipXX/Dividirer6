@@ -37,11 +37,13 @@ void Game::Go()
 	gfx.BeginFrame();	
 
 	float dt = timer.Mark();
+	//time slowdown when dt too high
+	if (dt > 0.02f) dt = 0.02f;
 	//for testing
 	//assert(dt < 0.1f);
 	//if (dt > 0.1f) throw("ye");
 	dt *= GameSpeed / float(Iterations);
-
+	
 	//INPUT
 	inputHandling(dt);
 
