@@ -556,14 +556,14 @@ void Game::DeleteObject(GameObject* obj)
 		obj_cast_cir->RemoveLinksTO(m_objects);
 
 		///does not work because of Links that point at objects
-		//std::vector<CircleObject>::iterator it;
-		//for (it = m_objects.begin(); it != m_objects.end(); it++)
-		//{
-		//	if(&(it->m_pos) == &(obj->m_pos))break;
-		//}
-		//m_objects.erase(it);
+		std::vector<GameObject*>::iterator it;
+		for (it = m_objects.begin(); it != m_objects.end(); it++)
+		{
+			if(&((*it)->m_pos) == &(obj->m_pos))break;
+		}
+		m_objects.erase(it);
 
-		*obj_cast_cir = CircleObject();
+		//*obj_cast_cir = CircleObject();
 	}
 }
 
