@@ -457,7 +457,7 @@ void Game::DoCircleCollision(float dt)
 		{
 			if (&ii == &jj) continue;
 
-			if (ii.IsOverlappingWith(jj))
+			if (ii.IsOverlappingWith(&jj))
 			{
 				Vec2 distance_v = (jj.m_pos - ii.m_pos);
 				ii.m_pos += (jj.m_pos - ii.m_pos) * 0.5f;

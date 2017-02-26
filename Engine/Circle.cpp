@@ -5,60 +5,41 @@
 
 ////////Circle/////////////
 
-Circle::Circle()
+GameObject::GameObject()
 	:
-	m_pos(0.0f,0.0f),
-	m_radius(0.0f),
-	m_color(Colors::White)
+	m_pos(0.0f,0.0f)
 {
 }
 
-Circle::Circle(Vec2 pos, float radius, Color color)
+GameObject::GameObject(Vec2 pos)
 	:
-	m_pos(pos),
-	m_radius(radius),
-	m_color(color)
+	m_pos(pos)
 {
 
 }
 
-Circle::~Circle()
+GameObject::~GameObject()
 {
 }
 
-void Circle::Draw(Graphics & gfx) const
-{
-	gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius), m_color);
-}
-
-void Circle::Move(Vec2 dv)
+void GameObject::Move(Vec2 dv)
 {
 	m_pos += dv;
 }
-
-bool Circle::IsOverlappingWith(Circle & cir) const
-{
-	float distance{(m_pos - cir.m_pos).GetLength()};
-
-	if (distance < m_radius + cir.m_radius) return true;
-	else return false;
-}
-
-
-
-
 
 ///////CircleObject//////////
 
 CircleObject::CircleObject()
 	:
-	Circle()
+	GameObject()
 {
 }
 
 CircleObject::CircleObject(Vec2 pos, float radius, Color color)
 	:
-	Circle(pos, radius, color)
+	GameObject(pos),
+	m_radius(radius),
+	m_color(color)
 {
 }
 
@@ -145,4 +126,21 @@ void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
 void CircleObject::RemoveLinksFROM()
 {
 	m_links.clear();
+}
+
+bool CircleObject::IsOverlappingWith(GameObject * cir) const
+{
+	CircleObject* cast_cir = dynamic_cast<CircleObject*>(cir);
+	if (cast_cir)
+	{
+		float distance{ (m_pos - cast_cir->m_pos).GetLength() };
+
+		if (distance < m_radius + cast_cir->m_radius) return true;
+		else return false;
+	}
+	else
+	{
+		throw("unexpected type of object after casting [CircleObject::IsOverlappingWith()]");
+		return false;
+	}
 }

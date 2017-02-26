@@ -5,31 +5,29 @@
 
 #include "SpringLink.h"
 
-class Circle
+class GameObject
 {
 private:
-
 public:
 	Vec2 m_pos;
-	float m_radius;
-
-	Color m_color;
 
 public:
-	Circle();
-	Circle(Vec2 pos, float radius, Color color = Colors::White);
-	~Circle();
+	GameObject();
+	GameObject(Vec2 pos);
+	~GameObject();
 
-	virtual void Draw(Graphics& gfx) const;
 	virtual void Move(Vec2 dv);
-	bool IsOverlappingWith(Circle& cir) const;
+	virtual void Draw(Graphics& gfx) const = 0;
+	virtual bool IsOverlappingWith(GameObject* cir) const = 0;
 };
 
 
-class CircleObject : public Circle
+class CircleObject : public GameObject
 {
 private:
 public:
+	float m_radius;
+	Color m_color;
 	Vec2 m_v = Vec2(0,0);
 
 	std::vector<SpringLink> m_links;
@@ -46,4 +44,5 @@ public:
 	void RemoveLinksTO(std::vector<CircleObject>& objects);
 
 	void RemoveLinksFROM();
+	bool IsOverlappingWith(GameObject * cir) const;
 };
