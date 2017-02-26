@@ -473,16 +473,21 @@ void Game::DoCircleCollision(float dt)
 				if (jj_cast_cir && ii_cast_cir)
 				{
 					Vec2 distance_v = (jj->m_pos - ii->m_pos);
-					ii->m_pos += (jj->m_pos - ii->m_pos) * 0.5f;
-					jj->m_pos = ii->m_pos;
-					distance_v.Normalize();
+					//ii->m_pos += (jj->m_pos - ii->m_pos) * 0.5f;
+					//jj->m_pos = ii->m_pos;
+					//distance_v.Normalize();
+					//
+					//ii->m_pos -= distance_v * (ii_cast_cir->m_radius + jj_cast_cir->m_radius) * 0.5f;
+					//jj->m_pos += distance_v * (ii_cast_cir->m_radius + jj_cast_cir->m_radius) * 0.5f;
+					////its not quite physicly accurate but it kinda works
+					//float v = (jj->m_v.GetLength() + ii->m_v.GetLength()) / 2.0f;
+					//ii->m_v -= distance_v * v * 0.05f;
+					//jj->m_v += distance_v * v * 0.05f;
 
-					ii->m_pos -= distance_v * (ii_cast_cir->m_radius + jj_cast_cir->m_radius) * 0.5f;
-					jj->m_pos += distance_v * (ii_cast_cir->m_radius + jj_cast_cir->m_radius) * 0.5f;
-					//its not quite physicly accurate but it kinda works
-					float v = (jj->m_v.GetLength() + ii->m_v.GetLength()) / 2.0f;
-					ii->m_v -= distance_v * v * 0.05f;
-					jj->m_v += distance_v * v * 0.05f;
+
+					distance_v.Normalize();
+					ii->m_v -= distance_v * dt * 30000.0f;
+
 				}
 			}
 		}
