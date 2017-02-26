@@ -57,26 +57,29 @@ void CircleObject::Update_Links(float dt)
 	}
 }
 
-void CircleObject::Draw(Graphics& gfx) const
+void CircleObject::Draw(Graphics& gfx, Vec2& Offset) const
 {
+	int xOffset = int(Offset.x);
+	int yOffset = int(Offset.y);
+
 	if (m_pos.y - 1 > gfx.ScreenHeight - 20 - m_radius)
 	{
-		gfx.DrawEllipse(int(m_pos.x), int(m_pos.y), int(m_radius), Colors::Black);
-		gfx.DrawEllipse(int(m_pos.x), int(m_pos.y), int(m_radius - 2), m_color);
+		gfx.DrawEllipse(int(m_pos.x) + xOffset, int(m_pos.y) + yOffset, int(m_radius), Colors::Black);
+		gfx.DrawEllipse(int(m_pos.x) + xOffset, int(m_pos.y) + yOffset, int(m_radius - 2), m_color);
 
 
-		gfx.DrawEllipse(int(m_pos.x + m_radius / 4), int(m_pos.y - m_radius / 4), int(m_radius / 3),
+		gfx.DrawEllipse(int(m_pos.x + m_radius / 4) + xOffset, int(m_pos.y - m_radius / 4) + yOffset, int(m_radius / 3),
 			Color(m_color.GetR() + 60 < 255 ? m_color.GetR() + 60 : 255,
 				m_color.GetG() + 60 < 255 ? m_color.GetG() + 60 : 255,
 				m_color.GetB() + 60 < 255 ? m_color.GetB() + 60 : 255));
 	}
 	else
 	{
-		gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius), Colors::Black);
-		gfx.DrawCircle(int(m_pos.x), int(m_pos.y), int(m_radius - 2), m_color);
+		gfx.DrawCircle(int(m_pos.x) + xOffset, int(m_pos.y) + yOffset, int(m_radius), Colors::Black);
+		gfx.DrawCircle(int(m_pos.x) + xOffset, int(m_pos.y) + yOffset, int(m_radius - 2), m_color);
 
 
-		gfx.DrawCircle(int(m_pos.x + m_radius / 4), int(m_pos.y - m_radius / 4), int(m_radius / 3),
+		gfx.DrawCircle(int(m_pos.x + m_radius / 4) + xOffset, int(m_pos.y - m_radius / 4) + yOffset, int(m_radius / 3),
 			Color(m_color.GetR() + 60 < 255 ? m_color.GetR() + 60 : 255,
 				m_color.GetG() + 60 < 255 ? m_color.GetG() + 60 : 255,
 				m_color.GetB() + 60 < 255 ? m_color.GetB() + 60 : 255));

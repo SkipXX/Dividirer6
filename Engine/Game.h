@@ -68,6 +68,8 @@ private:
 	float GameSpeed = 1.0f;
 	float ShiftSpeedFaktor = 3.0f;
 
+	Vec2 Camera = Vec2(gfx.ScreenWidth/2,gfx.ScreenHeight/2);
+
 	int Iterations = 500;
 
 	float moveSpeed = 500.0f;
@@ -75,9 +77,10 @@ private:
 
 	FrameTimer timer;
 
-	uint8_t inputBuffer = 0x0;
+	uint16_t inputBuffer = 0x0;
 	bool pause = false;
 	bool m_gravitation = true;
 	bool m_reibung = true;
+	bool m_camera = false;
 	/********************************/
 };

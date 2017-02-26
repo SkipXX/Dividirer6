@@ -20,7 +20,7 @@ public:
 	~GameObject();
 
 	virtual void Move(Vec2 dv);
-	virtual void Draw(Graphics& gfx) const = 0;
+	virtual void Draw(Graphics& gfx, Vec2& Camera) const = 0;
 	virtual bool IsOverlappingWith(GameObject* cir) const = 0;
 	virtual bool IsInObject(Vec2& point) const = 0;
 	virtual void Update(float dt) = 0;
@@ -41,7 +41,7 @@ public:
 	
 	void Update(float dt);
 	void Update_Links(float dt);
-	void Draw(Graphics & gfx) const;
+	void Draw(Graphics & gfx, Vec2& Offset = Vec2(0,0)) const;
 
 	void RemoveLinksTO(std::vector<GameObject*>& objects);
 	void RemoveLinksFROM();

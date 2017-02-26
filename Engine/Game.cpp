@@ -140,6 +140,19 @@ void Game::UpdateModel(float dt)
 			//bounce BOUNCE
 			DoCircleCollision(dt);
 		}
+
+
+
+		//Upadte Camera
+		if (m_camera && thePossesed) 
+		{
+			Camera = thePossesed->m_pos;
+		}
+		else
+		{
+			Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
+		}
+
 	}
 
 
@@ -147,6 +160,10 @@ void Game::UpdateModel(float dt)
 
 void Game::ComposeFrame()
 {
+	int xOffset = gfx.ScreenWidth / 2 - int(Camera.x) ;
+	int yOffset = gfx.ScreenHeight / 2 - int(Camera.y);
+	Vec2 Offset = Vec2(float(xOffset), float(yOffset));
+
 	//BG
 	for (int xx = 0; xx < gfx.ScreenWidth; xx++)
 	{
@@ -162,7 +179,7 @@ void Game::ComposeFrame()
 	//Circles
 	for (auto& ii : m_objects)
 	{
-		ii->Draw(gfx);
+		ii->Draw(gfx, Offset);
 	}
 
 	//Draws all Links
@@ -171,7 +188,7 @@ void Game::ComposeFrame()
 		//if (&ii == &m_objects.at(0)) continue;
 		for (auto& jj : ii->m_links)
 		{
-			gfx.DrawLine(ii->m_pos, *(jj.linkedPoint));	
+			gfx.DrawLine(ii->m_pos + Offset, *(jj.linkedPoint) + Offset);
 		}
 	}
 
@@ -216,13 +233,13 @@ void Game::ComposeFrame()
 	{
 		if (ii->dragging)
 		{
-			gfx.DrawLine(ii->m_pos,Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()), Colors::Magenta);
+			gfx.DrawLine(ii->m_pos + Offset,Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
 		}
 	}
 
 	//Draws Ground and Wall
-	gfx.DrawRect(0,gfx.ScreenHeight - 20,gfx.ScreenWidth,gfx.ScreenHeight, Colors::Gray);
-	gfx.DrawRect(gfx.ScreenWidth - 20, 0, gfx.ScreenWidth, gfx.ScreenHeight, Colors::Gray);
+	gfx.DrawRect(0 + xOffset,gfx.ScreenHeight - 20 + yOffset,gfx.ScreenWidth + xOffset,gfx.ScreenHeight + yOffset, Colors::Gray);
+	gfx.DrawRect(gfx.ScreenWidth - 20 + xOffset, 0 + yOffset, gfx.ScreenWidth + xOffset, gfx.ScreenHeight + yOffset, Colors::Gray);
 }
 
 void Game::DrawPossesed()
@@ -231,10 +248,12 @@ void Game::DrawPossesed()
 
 	//white circle
 	{
+		Vec2 Offset = Vec2(float(gfx.ScreenWidth / 2 - int(Camera.x)), float(gfx.ScreenHeight / 2 - int(Camera.y)));
+
 		CircleObject* thePossesed_cast_cir = dynamic_cast<CircleObject*>(thePossesed);
 		if (thePossesed_cast_cir)
 		{
-			gfx.DrawCircle((int)thePossesed_cast_cir->m_pos.x, (int)thePossesed_cast_cir->m_pos.y, int(thePossesed_cast_cir->m_radius) + 2, Colors::SoftWhite);
+			gfx.DrawCircle(int(thePossesed_cast_cir->m_pos.x + Offset.x), int(thePossesed_cast_cir->m_pos.y + Offset.y), int(thePossesed_cast_cir->m_radius) + 2, Colors::SoftWhite);
 		}
 	}
 
@@ -377,6 +396,8 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x8;
 	}
 
+
+
 	//possesed movement (jump)
 	if (thePossesed)
 	{
@@ -414,6 +435,16 @@ void Game::inputHandling(float dt)
 			}
 		}
 	}
+
+
+
+	//if 'C' is pressed (Camera ON/OFF)
+	if (wnd.kbd.KeyIsPressed(0x43) && !(inputBuffer & 0x100))
+	{
+		m_camera = !m_camera;
+		inputBuffer |= 0x100;
+	}
+
 
 
 	if (inputBuffer)
@@ -467,6 +498,12 @@ void Game::inputHandling(float dt)
 		if ((inputBuffer & 0x80) && !wnd.kbd.KeyIsPressed(VK_DOWN))
 		{
 			inputBuffer &= ~0x80;
+		}
+
+		// 0x100 = 'C'-Key ... Camera ON/OFF
+		if ((inputBuffer & 0x100) && !wnd.kbd.KeyIsPressed(0x43))
+		{
+			inputBuffer &= ~0x100;
 		}
 	}
 	///
