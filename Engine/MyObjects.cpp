@@ -1,4 +1,4 @@
-#include "Circle.h"
+#include "MyObjects.h"
 
 #define MY_INNENKONSTANTE 1.0f
 #define MY_AUSSENKONSTANTE 1.0f

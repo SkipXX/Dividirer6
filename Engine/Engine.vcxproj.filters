@@ -69,10 +69,10 @@
     <ClInclude Include="Rect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Circle.h">
+    <ClInclude Include="SpringLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpringLink.h">
+    <ClInclude Include="MyObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,10 +113,10 @@
     <ClCompile Include="Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Circle.cpp">
+    <ClCompile Include="SpringLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpringLink.cpp">
+    <ClCompile Include="MyObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
