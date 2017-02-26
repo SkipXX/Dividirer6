@@ -5,12 +5,6 @@
 
 ////////Circle/////////////
 
-GameObject::GameObject()
-	:
-	m_pos(0.0f,0.0f)
-{
-}
-
 GameObject::GameObject(Vec2 pos)
 	:
 	m_pos(pos)
@@ -31,7 +25,7 @@ void GameObject::Move(Vec2 dv)
 
 CircleObject::CircleObject()
 	:
-	GameObject()
+	GameObject(Vec2(0.0f,0.0f))
 {
 }
 
@@ -89,15 +83,15 @@ void CircleObject::Draw(Graphics& gfx) const
 	}
 }
 
-void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
+void CircleObject::RemoveLinksTO(std::vector<GameObject*>& objects)
 {
 	for (auto& ii : objects)
 	{
-		if (&ii == this) continue;
+		if (ii == this) continue;
 
 		bool found = false;
 
-		for(auto& jj : ii.m_links)
+		for(auto& jj : ii->m_links)
 		{
 			if (jj.linkedPoint == &m_pos)
 			{
@@ -110,7 +104,7 @@ void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
 		{
 			std::vector<SpringLink> temp;
 
-			for (auto& jj : ii.m_links)
+			for (auto& jj : ii->m_links)
 			{
 				if (!(jj.linkedPoint == &m_pos))
 				{
@@ -118,7 +112,7 @@ void CircleObject::RemoveLinksTO(std::vector<CircleObject>& objects)
 				}
 			}
 
-			ii.m_links = temp;
+			ii->m_links = temp;
 		}
 	}
 }
@@ -143,4 +137,9 @@ bool CircleObject::IsOverlappingWith(GameObject * cir) const
 		throw("unexpected type of object after casting [CircleObject::IsOverlappingWith()]");
 		return false;
 	}
+}
+
+bool CircleObject::IsInObject(Vec2 & point) const
+{
+	return (point - m_pos).GetLengthSq() < m_radius*m_radius;
 }

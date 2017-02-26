@@ -10,15 +10,20 @@ class GameObject
 private:
 public:
 	Vec2 m_pos;
+	Vec2 m_v = Vec2(0,0);
+	std::vector<SpringLink> m_links;
 
+	bool dragging = false;
 public:
-	GameObject();
+	GameObject() = delete;
 	GameObject(Vec2 pos);
 	~GameObject();
 
 	virtual void Move(Vec2 dv);
 	virtual void Draw(Graphics& gfx) const = 0;
 	virtual bool IsOverlappingWith(GameObject* cir) const = 0;
+	virtual bool IsInObject(Vec2& point) const = 0;
+	virtual void Update(float dt) = 0;
 };
 
 
@@ -28,10 +33,7 @@ private:
 public:
 	float m_radius;
 	Color m_color;
-	Vec2 m_v = Vec2(0,0);
 
-	std::vector<SpringLink> m_links;
-	bool dragging = false;
 public:
 	CircleObject();
 	CircleObject(Vec2 pos, float radius, Color color = Colors::White);
@@ -41,8 +43,9 @@ public:
 	void Update_Links(float dt);
 	void Draw(Graphics & gfx) const;
 
-	void RemoveLinksTO(std::vector<CircleObject>& objects);
-
+	void RemoveLinksTO(std::vector<GameObject*>& objects);
 	void RemoveLinksFROM();
+
 	bool IsOverlappingWith(GameObject * cir) const;
+	bool IsInObject(Vec2& point) const;
 };

@@ -42,20 +42,20 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void inputHandling(float dt);
-	void CreateMutualLink(CircleObject * C1, CircleObject * C2, float c, float l);
+	void CreateMutualLink(GameObject * C1, GameObject * C2, float c, float l);
 	void DoCircleCollision(float dt);
 	void setupObjects();
 	void DoWallCollision(float dt);
 	void DrawPossesed();
 
-	void DeleteObject(CircleObject * obj);
+	void DeleteObject(GameObject * obj);
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	std::vector<CircleObject> m_circles;
+	std::vector<GameObject*> m_objects;
 
 	Vec2 LastMousePos;
 
@@ -70,7 +70,7 @@ private:
 	int Iterations = 500;
 
 	float moveSpeed = 500.0f;
-	CircleObject* thePossesed = nullptr;
+	GameObject* thePossesed = nullptr;
 
 	FrameTimer timer;
 
