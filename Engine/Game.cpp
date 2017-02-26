@@ -250,7 +250,8 @@ void Game::DrawPossesed()
 
 
 void Game::inputHandling(float dt)
-{	
+
+{	///Mouse
 	//possesed select even in pause
 	if (pause && wnd.mouse.LeftIsPressed())
 	{
@@ -283,37 +284,67 @@ void Game::inputHandling(float dt)
 		thePossesed = nullptr;
 	}
 
-
-	//Movement
+	//continual the possesed movement
 	if (!pause && thePossesed)
 	{
-		//continual movement
-		//if LEFT is pressed (move left)
-		if (wnd.kbd.KeyIsPressed(VK_LEFT))
+		if (!wnd.kbd.KeyIsPressed(VK_SHIFT))
 		{
-			thePossesed->m_v.x -= moveSpeed * dt * Iterations;
+			//if LEFT is pressed (move left)
+			if (wnd.kbd.KeyIsPressed(VK_LEFT))
+			{
+				thePossesed->m_v.x -= moveSpeed * dt * Iterations;
+			}
+
+
+			//if right is pressed (move right)
+			if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+			{
+				thePossesed->m_v.x += moveSpeed * dt * Iterations;
+			}
+
+
+			//if UP is pressed (move up)
+			if (wnd.kbd.KeyIsPressed(VK_UP))
+			{
+				thePossesed->m_v.y -= moveSpeed * dt * Iterations;
+			}
+
+
+			//if DOWN is pressed (move down)
+			if (wnd.kbd.KeyIsPressed(VK_DOWN))
+			{
+				thePossesed->m_v.y += moveSpeed * dt * Iterations;
+			}
 		}
-
-
-		//if right is pressed (move right)
-		if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+		else
 		{
-			thePossesed->m_v.x += moveSpeed * dt * Iterations;
+			//if LEFT is pressed (move left)
+			if (wnd.kbd.KeyIsPressed(VK_LEFT))
+			{
+				thePossesed->m_v.x -= moveSpeed * ShiftSpeedFaktor * dt * Iterations;
+			}
+
+
+			//if right is pressed (move right)
+			if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+			{
+				thePossesed->m_v.x += moveSpeed * ShiftSpeedFaktor * dt * Iterations;
+			}
+
+
+			//if UP is pressed (move up)
+			if (wnd.kbd.KeyIsPressed(VK_UP))
+			{
+				thePossesed->m_v.y -= moveSpeed * ShiftSpeedFaktor * dt * Iterations;
+			}
+
+
+			//if DOWN is pressed (move down)
+			if (wnd.kbd.KeyIsPressed(VK_DOWN))
+			{
+				thePossesed->m_v.y += moveSpeed * ShiftSpeedFaktor * dt * Iterations;
+			}
 		}
-
-
-		//if UP is pressed (move up)
-		if (wnd.kbd.KeyIsPressed(VK_UP))
-		{
-			thePossesed->m_v.y -= moveSpeed * dt * Iterations;
-		}
-
-
-		//if DOWN is pressed (move down)
-		if (wnd.kbd.KeyIsPressed(VK_DOWN))
-		{
-			thePossesed->m_v.y += moveSpeed * dt * Iterations;
-		} 
 	
 	}
 
@@ -349,35 +380,38 @@ void Game::inputHandling(float dt)
 	//possesed movement (jump)
 	if (thePossesed)
 	{
-		//if LEFT is pressed (move left)
-		if (wnd.kbd.KeyIsPressed(VK_LEFT) && !(inputBuffer & 0x10))
+		if (!wnd.kbd.KeyIsPressed(VK_SHIFT))
 		{
-			thePossesed->m_v.x -= moveSpeed;
-			inputBuffer |= 0x10;
-		}
+			//if LEFT is pressed (move left)
+			if (wnd.kbd.KeyIsPressed(VK_LEFT) && !(inputBuffer & 0x10))
+			{
+				thePossesed->m_v.x -= moveSpeed;
+				inputBuffer |= 0x10;
+			}
 
 
-		//if right is pressed (move right)
-		if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !(inputBuffer & 0x20))
-		{
-			thePossesed->m_v.x += moveSpeed;
-			inputBuffer |= 0x20;
-		}
+			//if right is pressed (move right)
+			if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !(inputBuffer & 0x20))
+			{
+				thePossesed->m_v.x += moveSpeed;
+				inputBuffer |= 0x20;
+			}
 
 
-		//if UP is pressed (move up)
-		if (wnd.kbd.KeyIsPressed(VK_UP) && !(inputBuffer & 0x40))
-		{
-			thePossesed->m_v.y -= moveSpeed;
-			inputBuffer |= 0x40;
-		}
+			//if UP is pressed (move up)
+			if (wnd.kbd.KeyIsPressed(VK_UP) && !(inputBuffer & 0x40))
+			{
+				thePossesed->m_v.y -= moveSpeed;
+				inputBuffer |= 0x40;
+			}
 
 
-		//if DOWN is pressed (move down)
-		if (wnd.kbd.KeyIsPressed(VK_DOWN) && !(inputBuffer & 0x80))
-		{
-			thePossesed->m_v.y += moveSpeed;
-			inputBuffer |= 0x80;
+			//if DOWN is pressed (move down)
+			if (wnd.kbd.KeyIsPressed(VK_DOWN) && !(inputBuffer & 0x80))
+			{
+				thePossesed->m_v.y += moveSpeed;
+				inputBuffer |= 0x80;
+			}
 		}
 	}
 
@@ -483,7 +517,6 @@ void Game::DoCircleCollision(float dt)
 					//float v = (jj->m_v.GetLength() + ii->m_v.GetLength()) / 2.0f;
 					//ii->m_v -= distance_v * v * 0.05f;
 					//jj->m_v += distance_v * v * 0.05f;
-
 
 					distance_v.Normalize();
 					ii->m_v -= distance_v * dt * 30000.0f;

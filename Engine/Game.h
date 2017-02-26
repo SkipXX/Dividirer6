@@ -66,6 +66,7 @@ private:
 	float Reibungskoeffizient = 0.1f;
 	float WallBounceFaktor = 1.0f;
 	float GameSpeed = 1.0f;
+	float ShiftSpeedFaktor = 3.0f;
 
 	int Iterations = 500;
 
