@@ -77,7 +77,7 @@ void Game::UpdateModel(float dt)
 				if (ii->dragging)
 				{
 					ii->dragging = false;
-					ii->m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos).Normalize() * ThrowingStrenght;
+					ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos).Normalize() * ThrowingStrenght;
 
 				}
 			}
@@ -85,7 +85,7 @@ void Game::UpdateModel(float dt)
 
 		if (!pause)
 		{
-			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
 			//Draggin 2/2
 			if (wnd.mouse.LeftIsPressed())
 			{
@@ -107,7 +107,7 @@ void Game::UpdateModel(float dt)
 						if (OnlyOne)
 						{
 							ii->dragging = true;
-							if((ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
+							if(!m_camera && (ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
 							//ii->m_pos += (mousePos - ii->m_pos) * dt;
 							ii->m_v = Vec2(0, 0);
 
@@ -294,7 +294,7 @@ void Game::inputHandling(float dt)
 	//possesed select even in pause
 	if (pause && wnd.mouse.LeftIsPressed())
 	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
 		for (auto& ii : m_objects)
 		{
 			if (ii->dragging || ii->IsInObject(mousePos))
