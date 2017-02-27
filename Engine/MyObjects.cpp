@@ -27,6 +27,7 @@ CircleObject::CircleObject()
 	:
 	GameObject(Vec2(0.0f,0.0f))
 {
+	typeOfObject = GameObjectType::CIRCLE;
 }
 
 CircleObject::CircleObject(Vec2 pos, float radius, Color color)
@@ -35,6 +36,7 @@ CircleObject::CircleObject(Vec2 pos, float radius, Color color)
 	m_radius(radius),
 	m_color(color)
 {
+	typeOfObject = GameObjectType::CIRCLE;
 }
 
 
@@ -125,11 +127,11 @@ void CircleObject::RemoveLinksFROM()
 	m_links.clear();
 }
 
-bool CircleObject::IsOverlappingWith(GameObject * cir) const
+bool CircleObject::IsOverlappingWith(GameObject * obj) const
 {
-	CircleObject* cast_cir = dynamic_cast<CircleObject*>(cir);
-	if (cast_cir)
+	if (obj->GetType() == GameObjectType::CIRCLE)
 	{
+		CircleObject* cast_cir = static_cast<CircleObject*>(obj);
 		float distanceSq{ (m_pos - cast_cir->m_pos).GetLengthSq() };
 
 		if (distanceSq < (m_radius + cast_cir->m_radius) * (m_radius + cast_cir->m_radius)) return true;
@@ -145,4 +147,9 @@ bool CircleObject::IsOverlappingWith(GameObject * cir) const
 bool CircleObject::IsInObject(Vec2 & point) const
 {
 	return (point - m_pos).GetLengthSq() < m_radius*m_radius;
+}
+
+GameObjectType CircleObject::GetType() const
+{
+	return typeOfObject;
 }
