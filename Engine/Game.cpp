@@ -23,8 +23,6 @@
 
 #include <cmath>
 #include <cassert>
-#include <thread>
-#include <iostream>
 
 Game::Game(MainWindow& wnd)
 	:
@@ -43,16 +41,20 @@ Game::~Game()
 	m_objects.clear();
 }
 
+
+
 void Game::Go()
 {
-	gfx.BeginFrame();
+	gfx.BeginFrame();	
 
 	float dt = timer.Mark();
-		//time slowdown when dt too high
+	//time slowdown when dt too high
 	if (dt > 0.02f) dt = 0.02f;
-
+	//for testing
+	//assert(dt < 0.1f);
+	//if (dt > 0.1f) throw("ye");
 	dt *= GameSpeed / float(Iterations);
-
+	
 	//INPUT
 	inputHandling(dt);
 
@@ -64,113 +66,106 @@ void Game::Go()
 	gfx.EndFrame();
 }
 
-
-
 void Game::UpdateModel(float dt)
 {
-	///Multithreading
-	//bounce BOUNCE
-	std::thread CircleCollosion(&Game::DoCircleCollision,this, dt);
-
-	std::cout << "hi";
-	std::cin.get();
-
-
-	//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (!wnd.mouse.LeftIsPressed())
-	{
-		for (auto& ii : m_objects)
+	
+		//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (!wnd.mouse.LeftIsPressed())
 		{
-			if (ii->dragging)
-			{
-				ii->dragging = false;
-				ii->m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
-
-			}
-		}
-	}
-
-	if (!pause)
-	{
-		//Draggin 2/2
-		if (wnd.mouse.LeftIsPressed())
-		{
-			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
-
 			for (auto& ii : m_objects)
 			{
-				if (ii->dragging || ii->IsInObject(mousePos))
+				if (ii->dragging)
 				{
-					bool OnlyOne = true;
-					for (auto& jj : m_objects)
-					{
-						if (&ii == &jj) continue;
-						if (jj->dragging)
-						{
-							OnlyOne = false;
-							break;
-						}
-					}
-					if (OnlyOne)
-					{
-						ii->dragging = true;
-						ii->m_pos = mousePos;
-						ii->m_v = Vec2(0, 0);
-						LastMousePos = mousePos;
-
-						thePossesed = ii;
-					}
+					ii->dragging = false;
+					ii->m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
 
 				}
 			}
 		}
 
-		//Daempfung
-		if (m_reibung)
+		if (!pause)
 		{
+			//Draggin 2/2
+			if (wnd.mouse.LeftIsPressed())
+			{
+				Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
+
+				for (auto& ii : m_objects)
+				{
+					if (ii->dragging || ii->IsInObject(mousePos))
+					{
+						bool OnlyOne = true;
+						for (auto& jj : m_objects)
+						{
+							if (&ii == &jj) continue;
+							if (jj->dragging)
+							{
+								OnlyOne = false;
+								break;
+							}
+						}
+						if (OnlyOne)
+						{
+							ii->dragging = true;
+							ii->m_pos = mousePos;
+							ii->m_v = Vec2(0, 0);
+							LastMousePos = mousePos;
+
+							thePossesed = ii;
+						}
+
+					}
+				}
+			}
+
+			//Daempfung
+			if (m_reibung)
+			{
+				for (auto& ii : m_objects)
+				{
+					ii->m_v *= pow(Daempfungsfaktor, dt);
+				}
+			}
+
+			//Gravitation
+			if (m_gravitation)
+			{
+				for (auto& ii : m_objects)
+				{
+					//if (&ii == &m_objects.at(0)) continue;
+					ii->m_v += Vec2(0, 600.0f) * dt;
+				}
+			}
+
+
+			//Movement
 			for (auto& ii : m_objects)
 			{
-				ii->m_v *= pow(Daempfungsfaktor, dt);
+				ii->Update(dt);
 			}
+
+
+			//Ground and Wall
+			DoWallCollision(dt);
+
+			//bounce BOUNCE
+			DoCircleCollision(dt);
 		}
 
-		//Gravitation
-		if (m_gravitation)
+
+
+		//Upadte Camera
+		if (m_camera && thePossesed) 
 		{
-			for (auto& ii : m_objects)
-			{
-				//if (&ii == &m_objects.at(0)) continue;
-				ii->m_v += Vec2(0, 600.0f) * dt;
-			}
+			Camera = thePossesed->m_pos;
 		}
-
-
-		//Movement
-		for (auto& ii : m_objects)
+		else
 		{
-			ii->Update(dt);
+			Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
 		}
 
-
-		//Ground and Wall
-		DoWallCollision(dt);
 	}
 
-
-
-	//Update Camera
-	if (m_camera && thePossesed)
-	{
-		Camera = thePossesed->m_pos;
-	}
-	else
-	{
-		Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
-	}
-
-	///Joining Threads
-	CircleCollosion.join();
-}
 
 
 
