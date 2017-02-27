@@ -352,6 +352,12 @@ void Game::inputHandling(float dt)
 
 		thePossesed = nullptr;
 	}
+	//delete links of possesed
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_DELETE) && thePossesed)
+	{
+		static_cast<CircleObject*>(thePossesed)->RemoveLinksTO(m_objects);
+		static_cast<CircleObject*>(thePossesed)->RemoveLinksFROM();
+	}
 
 	//continual the possesed movement
 	if (!pause && thePossesed)
