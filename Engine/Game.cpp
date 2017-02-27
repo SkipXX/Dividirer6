@@ -262,7 +262,7 @@ void Game::DrawPossesed()
 		CircleObject* thePossesed_cast_cir = dynamic_cast<CircleObject*>(thePossesed);
 		if (thePossesed_cast_cir)
 		{
-			gfx.DrawCircle(int(thePossesed_cast_cir->m_pos.x + Offset.x), int(thePossesed_cast_cir->m_pos.y + Offset.y), int(thePossesed_cast_cir->m_radius) + 2, Colors::SoftWhite);
+			gfx.DrawCircle(int(thePossesed_cast_cir->m_pos.x) + int(Offset.x), int(thePossesed_cast_cir->m_pos.y) + int(Offset.y), int(thePossesed_cast_cir->m_radius) + 2, Colors::SoftWhite);
 		}
 	}
 
