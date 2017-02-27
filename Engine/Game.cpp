@@ -253,8 +253,13 @@ void Game::ComposeFrame()
 	}
 
 	//Draws Ground and Wall
-	gfx.DrawRect(0 + xOffset,gfx.ScreenHeight - 20 + yOffset,gfx.ScreenWidth + xOffset,gfx.ScreenHeight + yOffset, Colors::Gray);
-	gfx.DrawRect(gfx.ScreenWidth - 20 + xOffset, 0 + yOffset, gfx.ScreenWidth + xOffset, gfx.ScreenHeight + yOffset, Colors::Gray);
+	for (int y = 0; y < gfx.ScreenHeight; ++y)
+	{
+		for (int x = 0; x < gfx.ScreenWidth; ++x)
+		{
+			if(y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth -20) gfx.PutPixel(x, y, Colors::Gray);
+		}
+	}
 }
 
 void Game::DrawPossesed()
