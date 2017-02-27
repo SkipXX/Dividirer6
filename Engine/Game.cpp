@@ -77,7 +77,7 @@ void Game::UpdateModel(float dt)
 				if (ii->dragging)
 				{
 					ii->dragging = false;
-					ii->m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos) * ThrowingStrenght;
+					ii->m_v += (Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())) - LastMousePos).Normalize() * ThrowingStrenght;
 
 				}
 			}
@@ -85,10 +85,10 @@ void Game::UpdateModel(float dt)
 
 		if (!pause)
 		{
+			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
 			//Draggin 2/2
 			if (wnd.mouse.LeftIsPressed())
 			{
-				Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY()));
 
 				for (auto& ii : m_objects)
 				{
@@ -107,9 +107,9 @@ void Game::UpdateModel(float dt)
 						if (OnlyOne)
 						{
 							ii->dragging = true;
-							ii->m_pos = mousePos;
+							if((ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
+							//ii->m_pos += (mousePos - ii->m_pos) * dt;
 							ii->m_v = Vec2(0, 0);
-							LastMousePos = mousePos;
 
 							thePossesed = ii;
 						}
@@ -117,6 +117,7 @@ void Game::UpdateModel(float dt)
 					}
 				}
 			}
+			LastMousePos = mousePos;
 
 			//Daempfung
 			if (m_reibung)
@@ -240,11 +241,14 @@ void Game::ComposeFrame()
 	}
 
 	//Drag Vector
-	for (auto& ii : m_objects)
+	if (pause)
 	{
-		if (ii->dragging)
+		for (auto& ii : m_objects)
 		{
-			gfx.DrawLine(ii->m_pos + Offset,Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
+			if (ii->dragging)
+			{
+				gfx.DrawLine(ii->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
+			}
 		}
 	}
 
@@ -554,7 +558,7 @@ void Game::DoCircleCollision(float dt)
 	for (auto& ii : m_objects)
 	{
 		//TESTCODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if (ii->m_v.x > 50000.0f) pause = true; 
+		if (ii->m_v.x > 20000.0f) pause = true; 
 		////////////////////////////////////////////
 		for (auto& jj : m_objects)
 		{
