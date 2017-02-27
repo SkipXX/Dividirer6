@@ -130,9 +130,9 @@ bool CircleObject::IsOverlappingWith(GameObject * cir) const
 	CircleObject* cast_cir = dynamic_cast<CircleObject*>(cir);
 	if (cast_cir)
 	{
-		float distance{ (m_pos - cast_cir->m_pos).GetLength() };
+		float distanceSq{ (m_pos - cast_cir->m_pos).GetLengthSq() };
 
-		if (distance < m_radius + cast_cir->m_radius) return true;
+		if (distanceSq < (m_radius + cast_cir->m_radius) * (m_radius + cast_cir->m_radius)) return true;
 		else return false;
 	}
 	else
