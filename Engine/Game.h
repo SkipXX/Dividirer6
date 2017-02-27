@@ -60,9 +60,11 @@ private:
 	std::vector<GameObject*> m_objects;
 
 	Vec2 LastMousePos;
+	Vec2 Camera = Vec2(gfx.ScreenWidth/2,gfx.ScreenHeight/2);
+	GameObject* tempObjForLink;
 
 	float Federlaenge = 50.0f;
-	float Federkonstante = 300.0f;
+	float Federkonstante = 100.0f;
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 1337.0f;
 	float Reibungskoeffizient = 0.1f;
@@ -70,7 +72,6 @@ private:
 	float GameSpeed = 1.0f;
 	float ShiftSpeedFaktor = 3.0f;
 
-	Vec2 Camera = Vec2(gfx.ScreenWidth/2,gfx.ScreenHeight/2);
 
 	int Iterations = 500;
 
@@ -84,5 +85,6 @@ private:
 	bool m_gravitation = true;
 	bool m_reibung = true;
 	bool m_camera = false;
+	bool m_creatingLink = false; //not used
 	/********************************/
 };

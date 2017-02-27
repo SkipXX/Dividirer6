@@ -291,10 +291,11 @@ void Game::DrawPossesed()
 void Game::inputHandling(float dt)
 {	
 	///Mouse
+	Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
+
 	//possesed select even in pause
 	if (pause && wnd.mouse.LeftIsPressed())
 	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
 		for (auto& ii : m_objects)
 		{
 			if (ii->dragging || ii->IsInObject(mousePos))
@@ -304,6 +305,35 @@ void Game::inputHandling(float dt)
 
 		}
 	}
+
+	//creating Link
+	if (wnd.mouse.RightIsPressed())
+	{
+		for (auto& ii : m_objects)
+		{
+			if (ii->IsInObject(mousePos))
+			{
+				if (thePossesed == ii) break;
+				CreateMutualLink(ii, thePossesed, Federkonstante, (ii->m_pos - thePossesed->m_pos).GetLength());
+
+				//if (tempObjForLink == ii) break;
+				//
+				//if (!m_creatingLink)
+				//{
+				//	tempObjForLink = ii;
+				//	m_creatingLink = true;
+				//}
+				//else
+				//{
+				//	CreateMutualLink(ii, tempObjForLink, Federkonstante, (ii->m_pos - tempObjForLink->m_pos).GetLength());
+				//	m_creatingLink = false;
+				//}
+
+			}
+
+		}
+	}
+
 
 	/// NOT BUFFERED
 	//Esc to exit
@@ -557,6 +587,7 @@ void Game::CreateMutualLink(GameObject* C1, GameObject* C2,float c, float l)
 	}
 }
 
+
 void Game::DoCircleCollision(float dt)
 {
 
@@ -596,6 +627,8 @@ void Game::DoCircleCollision(float dt)
 	}
 }
 
+
+
 void Game::setupObjects()
 {
 	for (auto& ii : m_objects)
@@ -628,6 +661,8 @@ void Game::setupObjects()
 	CreateMutualLink(m_objects.at(2), m_objects.at(3), Federkonstante, Federlaenge);
 }
 
+
+
 void Game::DoWallCollision(float dt)
 {
 	for (auto& ii : m_objects)
@@ -655,6 +690,7 @@ void Game::DoWallCollision(float dt)
 	}
 }
 
+
 void Game::DeleteObject(GameObject* obj)
 {
 	CircleObject* obj_cast_cir = dynamic_cast<CircleObject*>(obj);
@@ -673,6 +709,7 @@ void Game::DeleteObject(GameObject* obj)
 		//*obj_cast_cir = CircleObject();
 	}
 }
+
 
 void Game::CreateCircleObject(const Vec2& pos,const float& radius,const Color& c)
 {
