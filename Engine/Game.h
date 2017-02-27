@@ -50,6 +50,7 @@ private:
 	void DrawPossesed();
 
 	void DeleteObject(GameObject * obj);
+	void CreateCircleObject(const Vec2 & pos, const float & radius, const Color & c);
 	/********************************/
 private:
 	MainWindow& wnd;

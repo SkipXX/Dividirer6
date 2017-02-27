@@ -41,6 +41,8 @@ Game::~Game()
 	m_objects.clear();
 }
 
+
+
 void Game::Go()
 {
 	gfx.BeginFrame();	
@@ -278,8 +280,8 @@ void Game::DrawPossesed()
 
 
 void Game::inputHandling(float dt)
-
-{	///Mouse
+{	
+	///Mouse
 	//possesed select even in pause
 	if (pause && wnd.mouse.LeftIsPressed())
 	{
@@ -454,6 +456,12 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x100;
 	}
 
+	//if 'Einfg' is pressed (Camera ON/OFF)
+	if (wnd.kbd.KeyIsPressed(VK_INSERT) && !(inputBuffer & 0x0200))
+	{
+		CreateCircleObject(Vec2(float(wnd.mouse.GetPosX()), float(wnd.mouse.GetPosY())), 10.0f + rand() % 11, Color(rand()%256, rand() % 256, rand() % 256));
+		inputBuffer |= 0x200;
+	}
 
 
 	if (inputBuffer)
@@ -513,6 +521,12 @@ void Game::inputHandling(float dt)
 		if ((inputBuffer & 0x100) && !wnd.kbd.KeyIsPressed(0x43))
 		{
 			inputBuffer &= ~0x100;
+		}
+
+		// 0x200 = 'Einfg'-Key ... Create CircleObject
+		if ((inputBuffer & 0x200) && !wnd.kbd.KeyIsPressed(VK_INSERT))
+		{
+			inputBuffer &= ~0x200;
 		}
 	}
 	///
@@ -583,14 +597,14 @@ void Game::setupObjects()
 
 	thePossesed = nullptr;
 	
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(250, 50), 15, Colors::SoftBlue)));		//0
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(200, 100), 15, Colors::SoftRed)));		//1
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(200, 150), 15, Colors::SoftGreen)));		//2
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(250, 100), 15, Colors::SoftCyan)));		//3
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(250, 150), 15, Colors::Gray)));			//4
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(300, 100), 15, Colors::SoftMagenta)));	//5
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(400, 150), 15, Colors::SoftYellow)));	//6
-	m_objects.push_back(static_cast<GameObject*>(new CircleObject(Vec2(500, 150), 15, Colors::SoftWhite)));		//7
+	CreateCircleObject(Vec2(250, 50), 15, Colors::SoftBlue);		//0
+	CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
+	CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
+	CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
+	CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
+	CreateCircleObject(Vec2(300, 100), 15, Colors::SoftMagenta);	//5
+	CreateCircleObject(Vec2(400, 150), 15, Colors::SoftYellow);		//6
+	CreateCircleObject(Vec2(500, 150), 15, Colors::SoftWhite);		//7
 	
 	
 	CreateMutualLink(m_objects.at(1), m_objects.at(2), Federkonstante, Federlaenge);
@@ -649,5 +663,10 @@ void Game::DeleteObject(GameObject* obj)
 
 		//*obj_cast_cir = CircleObject();
 	}
+}
+
+void Game::CreateCircleObject(const Vec2& pos,const float& radius,const Color& c)
+{
+	m_objects.push_back(static_cast<GameObject*>(new CircleObject(pos, radius, c)));
 }
 
