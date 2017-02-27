@@ -32,6 +32,8 @@ public:
 	virtual bool IsInObject(Vec2& point) const = 0;
 	virtual void Update(float dt) = 0;
 	virtual GameObjectType GetType() const = 0;
+	virtual void RemoveLinksTO(std::vector<GameObject*>& objects) = 0;
+	virtual void RemoveLinksFROM() = 0;
 };
 
 

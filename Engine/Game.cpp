@@ -345,18 +345,15 @@ void Game::inputHandling(float dt)
 	//delete the possesed
 	if (wnd.kbd.KeyIsPressed(VK_DELETE) && thePossesed)
 	{
-		//thePossesed->RemoveLinksTO(m_objects);
-		//thePossesed->RemoveLinksFROM();
-
 		DeleteObject(thePossesed);
-
 		thePossesed = nullptr;
 	}
+
 	//delete links of possesed
 	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_DELETE) && thePossesed)
 	{
-		static_cast<CircleObject*>(thePossesed)->RemoveLinksTO(m_objects);
-		static_cast<CircleObject*>(thePossesed)->RemoveLinksFROM();
+		thePossesed->RemoveLinksTO(m_objects);
+		thePossesed->RemoveLinksFROM();
 	}
 
 	//continual the possesed movement
@@ -704,15 +701,12 @@ void Game::DeleteObject(GameObject* obj)
 	{
 		obj_cast_cir->RemoveLinksTO(m_objects);
 
-		///does not work because of Links that point at objects
 		std::vector<GameObject*>::iterator it;
 		for (it = m_objects.begin(); it != m_objects.end(); it++)
 		{
 			if(&((*it)->m_pos) == &(obj->m_pos))break;
 		}
 		m_objects.erase(it);
-
-		//*obj_cast_cir = CircleObject();
 	}
 }
 
