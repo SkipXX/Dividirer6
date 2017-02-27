@@ -32,6 +32,15 @@ Game::Game(MainWindow& wnd)
 	setupObjects();
 }
 
+Game::~Game()
+{
+	for (auto& ii : m_objects)
+	{
+		delete ii;
+	}
+	m_objects.clear();
+}
+
 void Game::Go()
 {
 	gfx.BeginFrame();	
