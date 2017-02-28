@@ -77,7 +77,7 @@ void Game::UpdateModel(float dt)
 				if (ii->dragging)
 				{
 					ii->dragging = false;
-					ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos).Normalize() * ThrowingStrenght;
+					ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos) * ThrowingStrenght;
 
 				}
 			}
