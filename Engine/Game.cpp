@@ -220,7 +220,7 @@ void Game::ComposeFrame()
 	//shooting Vector
 	if (m_shooting && thePossesed)
 	{
-		gfx.DrawLine(thePossesed->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
+		gfx.DrawLine(thePossesed->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()), Colors::Magenta);
 		
 	}
 
