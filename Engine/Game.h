@@ -72,7 +72,7 @@ private:
 	float ShiftSpeedFaktor = 3.0f;
 
 
-	int Iterations = 500;
+	int Iterations = 600;
 
 	float moveSpeed = 500.0f;
 	GameObject* thePossesed = nullptr;

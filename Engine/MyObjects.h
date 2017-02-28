@@ -20,6 +20,9 @@ public:
 	Vec2 m_v = Vec2(0,0);
 	std::vector<SpringLink> m_links;
 
+	Vec2 m_force = Vec2(0, 0);
+	float m_invMass = 1.0f;
+
 	bool dragging = false;
 public:
 	GameObject() = delete;

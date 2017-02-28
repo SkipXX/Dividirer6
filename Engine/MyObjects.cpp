@@ -1,7 +1,8 @@
 #include "MyObjects.h"
 
-#define MY_INNENKONSTANTE 1.0f
-#define MY_AUSSENKONSTANTE 1.0f
+#define MY_DICHTE 0.0014f
+#define MY_PI 3.1415f
+
 
 ////////Circle/////////////
 
@@ -37,12 +38,15 @@ CircleObject::CircleObject(Vec2 pos, float radius, Color color)
 	m_color(color)
 {
 	typeOfObject = GameObjectType::CIRCLE;
+	m_invMass = 1.0f / (MY_DICHTE * m_radius * m_radius * MY_PI);
 }
 
 
 void CircleObject::Update(float dt)
 {
 	Update_Links(dt);
+	m_v += m_force * m_invMass;
+	m_force = Vec2(0, 0);
 	m_pos += m_v * dt;
 }
 
@@ -54,7 +58,7 @@ void CircleObject::Update_Links(float dt)
 		float distance = distance_v.GetLength();
 		
 		//ii.m_pos -= distance_v.GetNormalized() * (distance - Federlaenge);
-		m_v += distance_v.GetNormalized() * ii.springConstant * MY_INNENKONSTANTE * (distance - ii.springLength) * dt;
+		m_force += distance_v.GetNormalized() * ii.springConstant * (distance - ii.springLength) * dt;
 		
 	}
 }

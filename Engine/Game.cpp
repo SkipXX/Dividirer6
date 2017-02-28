@@ -69,103 +69,103 @@ void Game::Go()
 void Game::UpdateModel(float dt)
 {
 	
-		//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if (!wnd.mouse.LeftIsPressed())
+	//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (!wnd.mouse.LeftIsPressed())
+	{
+		for (auto& ii : m_objects)
 		{
-			for (auto& ii : m_objects)
+			if (ii->dragging)
 			{
-				if (ii->dragging)
-				{
-					ii->dragging = false;
-					ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos) * ThrowingStrenght;
+				ii->dragging = false;
+				ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos) * ThrowingStrenght;
 
-				}
 			}
 		}
+	}
 
-		if (!pause)
+	if (!pause)
+	{
+		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
+		//Draggin 2/2
+		if (wnd.mouse.LeftIsPressed())
 		{
-			Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
-			//Draggin 2/2
-			if (wnd.mouse.LeftIsPressed())
-			{
 
-				for (auto& ii : m_objects)
+			for (auto& ii : m_objects)
+			{
+				if (ii->dragging || ii->IsInObject(mousePos))
 				{
-					if (ii->dragging || ii->IsInObject(mousePos))
+					bool OnlyOne = true;
+					for (auto& jj : m_objects)
 					{
-						bool OnlyOne = true;
-						for (auto& jj : m_objects)
+						if (&ii == &jj) continue;
+						if (jj->dragging)
 						{
-							if (&ii == &jj) continue;
-							if (jj->dragging)
-							{
-								OnlyOne = false;
-								break;
-							}
+							OnlyOne = false;
+							break;
 						}
-						if (OnlyOne)
-						{
-							ii->dragging = true;
-							if(!m_camera && (ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
-							//ii->m_pos += (mousePos - ii->m_pos) * dt;
-							ii->m_v = Vec2(0, 0);
-
-							thePossesed = ii;
-						}
-
 					}
+					if (OnlyOne)
+					{
+						ii->dragging = true;
+						if(!m_camera && (ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
+						//ii->m_pos += (mousePos - ii->m_pos) * dt;
+						ii->m_v = Vec2(0, 0);
+
+						thePossesed = ii;
+					}
+
 				}
 			}
-			LastMousePos = mousePos;
+		}
+		LastMousePos = mousePos;
 
-			//Daempfung
-			if (m_reibung)
-			{
-				for (auto& ii : m_objects)
-				{
-					ii->m_v *= pow(Daempfungsfaktor, dt);
-				}
-			}
+		//Ground and Wall
+		DoWallCollision(dt);
 
-			//Gravitation
-			if (m_gravitation)
-			{
-				for (auto& ii : m_objects)
-				{
-					//if (&ii == &m_objects.at(0)) continue;
-					ii->m_v += Vec2(0, 600.0f) * dt;
-				}
-			}
+		//bounce BOUNCE
+		DoCircleCollision(dt);
 
 
-			//Movement
+		//Daempfung
+		if (m_reibung)
+		{
 			for (auto& ii : m_objects)
 			{
-				ii->Update(dt);
+				ii->m_v *= pow(Daempfungsfaktor, dt);
 			}
-
-
-			//Ground and Wall
-			DoWallCollision(dt);
-
-			//bounce BOUNCE
-			DoCircleCollision(dt);
 		}
 
-
-
-		//Update Camera
-		if (m_camera && thePossesed) 
+		//Gravitation
+		if (m_gravitation)
 		{
-			Camera = thePossesed->m_pos;
+			for (auto& ii : m_objects)
+			{
+				//if (&ii == &m_objects.at(0)) continue;
+				ii->m_v += Vec2(0, 600.0f) * dt;
+			}
 		}
-		else
+
+
+		//Movement
+		for (auto& ii : m_objects)
 		{
-			Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
+			ii->Update(dt);
 		}
+
 
 	}
+
+	//Update Camera
+	if (m_camera && thePossesed) 
+	{
+		Camera = thePossesed->m_pos;
+	}
+	else
+	{
+		Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
+	}
+
+}
 
 
 
@@ -319,7 +319,7 @@ void Game::inputHandling(float dt)
 	}
 
 	//creating Link
-	if (wnd.mouse.RightIsPressed())
+	if (thePossesed && wnd.mouse.RightIsPressed())
 	{
 		for (auto& ii : m_objects)
 		{
@@ -631,7 +631,7 @@ void Game::DoCircleCollision(float dt)
 				{
 					Vec2 distance_v = (jj->m_pos - ii->m_pos);
 					distance_v.Normalize();
-					ii->m_v -= distance_v * dt * 30000.0f;
+					ii->m_force -= distance_v * dt * 30000.0f;
 
 					//ii->m_pos += (jj->m_pos - ii->m_pos) * 0.5f;
 					//jj->m_pos = ii->m_pos;
@@ -697,13 +697,13 @@ void Game::DoWallCollision(float dt)
 			{
 				//ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
 				//ii.m_v.y = -ii.m_v.y * WallBounceFaktor;
-				ii->m_v += Vec2(0.0f, -10000.0f) * dt * (ii->m_pos.y + ii_cast_cir->m_radius - (gfx.ScreenHeight - 20));
+				ii->m_force += Vec2(0.0f, -10000.0f) * dt * (ii->m_pos.y + ii_cast_cir->m_radius - (gfx.ScreenHeight - 20));
 
 				//ii.m_v *= pow(Reibungskoeffizient, dt);
 			}
 			if (ii->m_pos.x > gfx.ScreenWidth - 20 - ii_cast_cir->m_radius)
 			{
-				ii->m_v += Vec2(-10000.0f, 0.0f) * dt * (ii->m_pos.x + ii_cast_cir->m_radius - (gfx.ScreenWidth - 20));
+				ii->m_force += Vec2(-10000.0f, 0.0f) * dt * (ii->m_pos.x + ii_cast_cir->m_radius - (gfx.ScreenWidth - 20));
 
 				//ii.m_v *= pow(Reibungskoeffizient, dt);
 			}
@@ -713,11 +713,11 @@ void Game::DoWallCollision(float dt)
 			
 				if (ii->m_pos.y < 20 + ii_cast_cir->m_radius)
 				{
-					ii->m_v += Vec2(0.0f, 10000.0f) * dt * (20 - ii->m_pos.y + ii_cast_cir->m_radius);
+					ii->m_force += Vec2(0.0f, 10000.0f) * dt * (20 - ii->m_pos.y + ii_cast_cir->m_radius);
 				}
 				if (ii->m_pos.x < 20 + ii_cast_cir->m_radius)
 				{
-					ii->m_v += Vec2(10000.0f, 0.0f) * dt * (20 - ii->m_pos.x + ii_cast_cir->m_radius);
+					ii->m_force += Vec2(10000.0f, 0.0f) * dt * (20 - ii->m_pos.x + ii_cast_cir->m_radius);
 				}
 			
 			}
