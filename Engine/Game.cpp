@@ -605,11 +605,12 @@ void Game::DoCircleCollision(float dt)
 
 			if (ii->IsOverlappingWith(jj))
 			{
-				CircleObject* ii_cast_cir = dynamic_cast<CircleObject*>(ii);
-				CircleObject* jj_cast_cir = dynamic_cast<CircleObject*>(jj);
-				if (jj_cast_cir && ii_cast_cir)
+				if (jj->GetType() == GameObjectType::CIRCLE && ii->GetType() == GameObjectType::CIRCLE)
 				{
 					Vec2 distance_v = (jj->m_pos - ii->m_pos);
+					distance_v.Normalize();
+					ii->m_v -= distance_v * dt * 30000.0f;
+
 					//ii->m_pos += (jj->m_pos - ii->m_pos) * 0.5f;
 					//jj->m_pos = ii->m_pos;
 					//distance_v.Normalize();
@@ -620,9 +621,6 @@ void Game::DoCircleCollision(float dt)
 					//float v = (jj->m_v.GetLength() + ii->m_v.GetLength()) / 2.0f;
 					//ii->m_v -= distance_v * v * 0.05f;
 					//jj->m_v += distance_v * v * 0.05f;
-
-					distance_v.Normalize();
-					ii->m_v -= distance_v * dt * 30000.0f;
 
 				}
 			}
