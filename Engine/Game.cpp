@@ -257,7 +257,7 @@ void Game::ComposeFrame()
 	{
 		for (int x = 0; x < gfx.ScreenWidth; ++x)
 		{
-			if (y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth - 20)
+			if (y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth - 20 || (m_walls_lt && (x - xOffset < 20 || y - yOffset < 20)))
 			{
 				uint32_t a = (y - yOffset) + (x - xOffset); //* for fancy shit
 				//a = (a ^ 61) ^ (a >> 16);					//61,16
@@ -516,6 +516,12 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x200;
 	}
 
+	//if 'W' is pressed (Walls ON/OFF)
+	if (wnd.kbd.KeyIsPressed(0x57) && !(inputBuffer & 0x400))
+	{
+		m_walls_lt = !m_walls_lt;
+		inputBuffer |= 0x400;
+	}
 
 	if (inputBuffer)
 	{
@@ -580,6 +586,12 @@ void Game::inputHandling(float dt)
 		if ((inputBuffer & 0x200) && !wnd.kbd.KeyIsPressed(VK_INSERT))
 		{
 			inputBuffer &= ~0x200;
+		}
+
+		// 0x200 = 'Einfg'-Key ... Create CircleObject
+		if ((inputBuffer & 0x400) && !wnd.kbd.KeyIsPressed(0x57))
+		{
+			inputBuffer &= ~0x400;
 		}
 	}
 	///
@@ -677,9 +689,9 @@ void Game::DoWallCollision(float dt)
 {
 	for (auto& ii : m_objects)
 	{
-		CircleObject* ii_cast_cir = dynamic_cast<CircleObject*>(ii);
-		if (ii_cast_cir)
+		if (ii->GetType() == GameObjectType::CIRCLE)
 		{
+			CircleObject* ii_cast_cir = static_cast<CircleObject*>(ii);
 			if (ii->m_pos.y > gfx.ScreenHeight - 20 - ii_cast_cir->m_radius)
 			{
 				//ii.m_pos.y = gfx.ScreenHeight - 20 - ii.m_radius;
@@ -690,12 +702,25 @@ void Game::DoWallCollision(float dt)
 			}
 			if (ii->m_pos.x > gfx.ScreenWidth - 20 - ii_cast_cir->m_radius)
 			{
-				//ii.m_pos.x = gfx.ScreenWidth - 20 - ii.m_radius;
-				//ii.m_v.x = -ii.m_v.x * WallBounceFaktor;
 				ii->m_v += Vec2(-10000.0f, 0.0f) * dt * (ii->m_pos.x + ii_cast_cir->m_radius - (gfx.ScreenWidth - 20));
 
 				//ii.m_v *= pow(Reibungskoeffizient, dt);
 			}
+
+			if (m_walls_lt)
+			{
+			
+				if (ii->m_pos.y < 20 + ii_cast_cir->m_radius)
+				{
+					ii->m_v += Vec2(0.0f, 10000.0f) * dt * (20 - ii->m_pos.y + ii_cast_cir->m_radius);
+				}
+				if (ii->m_pos.x < 20 + ii_cast_cir->m_radius)
+				{
+					ii->m_v += Vec2(10000.0f, 0.0f) * dt * (20 - ii->m_pos.x + ii_cast_cir->m_radius);
+				}
+			
+			}
+
 		}
 	}
 }

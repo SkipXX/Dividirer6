@@ -68,7 +68,6 @@ private:
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 25.0f;
 	float Reibungskoeffizient = 0.1f;
-	float WallBounceFaktor = 1.0f;
 	float GameSpeed = 1.0f;
 	float ShiftSpeedFaktor = 3.0f;
 
@@ -86,5 +85,6 @@ private:
 	bool m_reibung = true;
 	bool m_camera = false;
 	bool m_creatingLink = false; //not used
+	bool m_walls_lt = true;
 	/********************************/
 };
