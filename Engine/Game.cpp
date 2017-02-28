@@ -581,12 +581,10 @@ void Game::CreateMutualLink(GameObject* C1, GameObject* C2,float c, float l)
 	assert(C1 != C2);
 	if (C1 == C2) return;
 
-	CircleObject* C1_cast_cir = dynamic_cast<CircleObject*>(C1);
-	CircleObject* C2_cast_cir = dynamic_cast<CircleObject*>(C2);
-	if (C1_cast_cir && C2_cast_cir)
+	if (C1->GetType() == GameObjectType::CIRCLE && C2->GetType() == GameObjectType::CIRCLE)
 	{
-		C1_cast_cir->m_links.push_back(SpringLink(&(C2->m_pos), c, l));
-		C2_cast_cir->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
+		C1->m_links.push_back(SpringLink(&(C2->m_pos), c, l));
+		C2->m_links.push_back(SpringLink(&(C1->m_pos), c, l));
 	}
 }
 
