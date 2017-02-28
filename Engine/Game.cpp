@@ -204,6 +204,38 @@ void Game::ComposeFrame()
 		}
 	}
 
+	//Drag Vector
+	if (pause)
+	{
+		for (auto& ii : m_objects)
+		{
+			if (ii->dragging)
+			{
+				gfx.DrawLine(ii->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
+			}
+		}
+	}
+
+	//Draws Ground and Wall
+	for (int y = 0; y < gfx.ScreenHeight; ++y)
+	{
+		for (int x = 0; x < gfx.ScreenWidth; ++x)
+		{
+			if (y - yOffset >= gfx.ScreenHeight - 20 || x - xOffset >= gfx.ScreenWidth - 20 || (m_walls_lt && (x - xOffset < 20 || y - yOffset < 20)))
+			{
+				uint32_t a = (y - yOffset) + (x - xOffset); //* for fancy shit
+				//a = (a ^ 61) ^ (a >> 16);					//61,16
+				//a = a + (a << 3);
+				a = a ^ (a >> 5);							//4
+				//a = a * 0x27d4eb2d;
+				a = a ^ (a >> 15);
+
+				if((a % 2) == 0) gfx.PutPixel(x, y, Colors::Gray);
+				else gfx.PutPixel(x, y, Color(150,150,150));
+			}
+		}
+	}
+
 	//Reibung und Grav toggle
 	if (m_reibung)
 	{	
@@ -240,37 +272,6 @@ void Game::ComposeFrame()
 		gfx.PutPixel(x + 2, y + 4, Colors::White);
 	}
 
-	//Drag Vector
-	if (pause)
-	{
-		for (auto& ii : m_objects)
-		{
-			if (ii->dragging)
-			{
-				gfx.DrawLine(ii->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
-			}
-		}
-	}
-
-	//Draws Ground and Wall
-	for (int y = 0; y < gfx.ScreenHeight; ++y)
-	{
-		for (int x = 0; x < gfx.ScreenWidth; ++x)
-		{
-			if (y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth - 20 || (m_walls_lt && (x - xOffset < 20 || y - yOffset < 20)))
-			{
-				uint32_t a = (y - yOffset) + (x - xOffset); //* for fancy shit
-				//a = (a ^ 61) ^ (a >> 16);					//61,16
-				//a = a + (a << 3);
-				a = a ^ (a >> 5);							//4
-				//a = a * 0x27d4eb2d;
-				a = a ^ (a >> 15);
-
-				if((a % 2) == 0) gfx.PutPixel(x, y, Colors::Gray);
-				else gfx.PutPixel(x, y, Color(150,150,150));
-			}
-		}
-	}
 }
 
 void Game::DrawPossesed()
