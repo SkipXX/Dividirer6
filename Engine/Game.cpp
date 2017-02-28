@@ -155,7 +155,7 @@ void Game::UpdateModel(float dt)
 
 
 
-		//Upadte Camera
+		//Update Camera
 		if (m_camera && thePossesed) 
 		{
 			Camera = thePossesed->m_pos;
@@ -728,18 +728,14 @@ void Game::DoWallCollision(float dt)
 
 void Game::DeleteObject(GameObject* obj)
 {
-	CircleObject* obj_cast_cir = dynamic_cast<CircleObject*>(obj);
-	if (true)
-	{
-		obj_cast_cir->RemoveLinksTO(m_objects);
+	obj->RemoveLinksTO(m_objects);
 
-		std::vector<GameObject*>::iterator it;
-		for (it = m_objects.begin(); it != m_objects.end(); it++)
-		{
-			if(&((*it)->m_pos) == &(obj->m_pos))break;
-		}
-		m_objects.erase(it);
+	std::vector<GameObject*>::iterator it;
+	for (it = m_objects.begin(); it != m_objects.end(); it++)
+	{
+		if(&((*it)->m_pos) == &(obj->m_pos))break;
 	}
+	m_objects.erase(it);
 }
 
 
