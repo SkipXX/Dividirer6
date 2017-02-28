@@ -69,7 +69,10 @@ void Game::Go()
 void Game::UpdateModel(float dt)
 {
 	
-	//Dragging 1/2 /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	///Dragging /// IMPROVE THAT IT DOES NOT CHECK EVERYTHING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
+
+	//throwing
 	if (!wnd.mouse.LeftIsPressed())
 	{
 		for (auto& ii : m_objects)
@@ -77,47 +80,57 @@ void Game::UpdateModel(float dt)
 			if (ii->dragging)
 			{
 				ii->dragging = false;
-				ii->m_v += (Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2)) - LastMousePos) * ThrowingStrenght;
+				ii->m_v += (mousePos - LastMousePos) * ThrowingStrenght;
 
 			}
 		}
 	}
 
-	if (!pause)
+	//shooting
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.mouse.LeftIsPressed())
 	{
-		Vec2 mousePos = Vec2(float(wnd.mouse.GetPosX() + Camera.x - gfx.ScreenWidth / 2), float(wnd.mouse.GetPosY() + Camera.y - gfx.ScreenHeight / 2));
-		//Draggin 2/2
-		if (wnd.mouse.LeftIsPressed())
+		shootTO = mousePos;
+		m_shooting = true;
+	}
+	if (m_shooting && !wnd.mouse.LeftIsPressed())
+	{
+		m_shooting = false;
+		if(thePossesed) thePossesed->m_v -= (thePossesed->m_pos - shootTO) * 10.0f;
+	}
+
+	//dragging
+	if (wnd.mouse.LeftIsPressed() && !wnd.kbd.KeyIsPressed(VK_SHIFT))
+	{
+		for (auto& ii : m_objects)
 		{
-
-			for (auto& ii : m_objects)
+			if (ii->dragging || ii->IsInObject(mousePos))
 			{
-				if (ii->dragging || ii->IsInObject(mousePos))
+				bool OnlyOne = true;
+				for (auto& jj : m_objects)
 				{
-					bool OnlyOne = true;
-					for (auto& jj : m_objects)
+					if (&ii == &jj) continue;
+					if (jj->dragging)
 					{
-						if (&ii == &jj) continue;
-						if (jj->dragging)
-						{
-							OnlyOne = false;
-							break;
-						}
+						OnlyOne = false;
+						break;
 					}
-					if (OnlyOne)
-					{
-						ii->dragging = true;
-						if(!m_camera && (ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
-						//ii->m_pos += (mousePos - ii->m_pos) * dt;
-						ii->m_v = Vec2(0, 0);
-
-						thePossesed = ii;
-					}
-
 				}
+				if (OnlyOne)
+				{
+					ii->dragging = true;
+					if(!m_camera && (ii->m_pos - LastMousePos).GetLengthSq() < (ii->m_pos - mousePos).GetLengthSq()) ii->m_pos += (mousePos - LastMousePos);
+					ii->m_v = Vec2(0, 0);
+
+					thePossesed = ii;
+				}
+
 			}
 		}
-		LastMousePos = mousePos;
+	}
+	LastMousePos = mousePos;
+
+	if (!pause)
+	{
 
 		//Ground and Wall
 		DoWallCollision(dt);
@@ -204,16 +217,11 @@ void Game::ComposeFrame()
 		}
 	}
 
-	//Drag Vector
-	if (pause)
+	//shooting Vector
+	if (m_shooting && thePossesed)
 	{
-		for (auto& ii : m_objects)
-		{
-			if (ii->dragging)
-			{
-				gfx.DrawLine(ii->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
-			}
-		}
+		gfx.DrawLine(thePossesed->m_pos + Offset, Vec2((float)wnd.mouse.GetPosX(), (float)wnd.mouse.GetPosY()) + Offset, Colors::Magenta);
+		
 	}
 
 	//Draws Ground and Wall

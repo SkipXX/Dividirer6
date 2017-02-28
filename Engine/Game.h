@@ -60,6 +60,8 @@ private:
 	std::vector<GameObject*> m_objects;
 
 	Vec2 LastMousePos;
+	Vec2 shootTO;
+	bool m_shooting = false;
 	Vec2 Camera = Vec2(gfx.ScreenWidth/2,gfx.ScreenHeight/2);
 	GameObject* tempObjForLink;
 
