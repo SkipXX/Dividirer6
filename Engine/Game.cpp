@@ -262,7 +262,7 @@ void Game::ComposeFrame()
 				uint32_t a = (y - yOffset) + (x - xOffset); //* for fancy shit
 				//a = (a ^ 61) ^ (a >> 16);					//61,16
 				//a = a + (a << 3);
-				a = a ^ (a >> 4);							//4
+				a = a ^ (a >> 5);							//4
 				//a = a * 0x27d4eb2d;
 				a = a ^ (a >> 15);
 
