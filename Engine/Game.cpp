@@ -257,7 +257,18 @@ void Game::ComposeFrame()
 	{
 		for (int x = 0; x < gfx.ScreenWidth; ++x)
 		{
-			if(y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth -20) gfx.PutPixel(x, y, Colors::Gray);
+			if (y - yOffset > gfx.ScreenHeight - 20 || x - xOffset > gfx.ScreenWidth - 20)
+			{
+				uint32_t a = (y - yOffset) * (x - xOffset);
+				a = (a ^ 61) ^ (a >> 16);
+				//a = a + (a << 3);
+				a = a ^ (a >> 4);		//should be 4
+				//a = a * 0x27d4eb2d;
+				a = a ^ (a >> 15);
+
+				if((a % 2) == 0) gfx.PutPixel(x, y, Colors::Gray);
+				else gfx.PutPixel(x, y, Color(150,150,150));
+			}
 		}
 	}
 }
