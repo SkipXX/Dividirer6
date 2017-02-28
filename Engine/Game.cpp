@@ -318,35 +318,6 @@ void Game::inputHandling(float dt)
 		}
 	}
 
-	//creating Link
-	if (thePossesed && wnd.mouse.RightIsPressed())
-	{
-		for (auto& ii : m_objects)
-		{
-			if (ii->IsInObject(mousePos))
-			{
-				if (thePossesed == ii) break;
-				CreateMutualLink(ii, thePossesed, Federkonstante, (ii->m_pos - thePossesed->m_pos).GetLength());
-
-				//if (tempObjForLink == ii) break;
-				//
-				//if (!m_creatingLink)
-				//{
-				//	tempObjForLink = ii;
-				//	m_creatingLink = true;
-				//}
-				//else
-				//{
-				//	CreateMutualLink(ii, tempObjForLink, Federkonstante, (ii->m_pos - tempObjForLink->m_pos).GetLength());
-				//	m_creatingLink = false;
-				//}
-
-			}
-
-		}
-	}
-
-
 	/// NOT BUFFERED
 	//Esc to exit
 	if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
@@ -524,6 +495,37 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x400;
 	}
 
+	//if 'RightClick' is pressed (Create Link)
+	//creating Link
+	if (thePossesed && wnd.mouse.RightIsPressed() && !(inputBuffer & 0x800))
+	{
+		for (auto& ii : m_objects)
+		{
+			if (ii->IsInObject(mousePos))
+			{
+				if (thePossesed == ii) break;
+				CreateMutualLink(ii, thePossesed, Federkonstante, (ii->m_pos - thePossesed->m_pos).GetLength());
+
+				//if (tempObjForLink == ii) break;
+				//
+				//if (!m_creatingLink)
+				//{
+				//	tempObjForLink = ii;
+				//	m_creatingLink = true;
+				//}
+				//else
+				//{
+				//	CreateMutualLink(ii, tempObjForLink, Federkonstante, (ii->m_pos - tempObjForLink->m_pos).GetLength());
+				//	m_creatingLink = false;
+				//}
+
+			}
+
+		}
+
+		inputBuffer |= 0x800;
+	}
+
 	if (inputBuffer)
 	{
 		// 0x1 = 'SPACE'-Key ... pause funktion
@@ -589,10 +591,16 @@ void Game::inputHandling(float dt)
 			inputBuffer &= ~0x200;
 		}
 
-		// 0x200 = 'Einfg'-Key ... Create CircleObject
+		// 0x400 = 'W'-Key ... Walls ON/OFF
 		if ((inputBuffer & 0x400) && !wnd.kbd.KeyIsPressed(0x57))
 		{
 			inputBuffer &= ~0x400;
+		}
+
+		// 0x200 = 'Rightclick'-Key ... Create Link
+		if ((inputBuffer & 0x800) && !wnd.mouse.RightIsPressed())
+		{
+			inputBuffer &= ~0x800;
 		}
 	}
 	///
