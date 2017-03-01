@@ -56,9 +56,10 @@ void Game::Go()
 	dt *= GameSpeed / float(Iterations);
 
 	//INPUT
-	inputHandling(dt);
 	for (int nn = 0; nn < Iterations; nn++)
 	{
+		inputHandling(dt);
+
 		for (auto& ii : m_objects)
 		{
 			UpdateModel(ii, dt);
