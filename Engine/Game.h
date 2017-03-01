@@ -39,14 +39,14 @@ public:
 	void Go();
 private:
 	void ComposeFrame();
-	void UpdateModel(float dt);
+	void UpdateModel(GameObject* ii,float dt);
 	/********************************/
 	/*  User Functions              */
 	void inputHandling(float dt);
 	void CreateMutualLink(GameObject * C1, GameObject * C2, float c, float l);
-	void DoCircleCollision(float dt);
+	void DoCircleCollision(GameObject* ii, float dt);
 	void setupObjects();
-	void DoWallCollision(float dt);
+	void DoWallCollision(GameObject* ii, float dt);
 	void DrawPossesed();
 
 	void DeleteObject(GameObject * obj);
