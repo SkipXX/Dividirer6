@@ -23,6 +23,9 @@
 
 #include <cmath>
 #include <cassert>
+#include <thread>
+
+
 
 Game::Game(MainWindow& wnd)
 	:
@@ -47,73 +50,120 @@ void Game::Go()
 {
 	gfx.BeginFrame();
 
+	
+		endThreads = false;
+
+
 	float dt = timer.Mark();
 	//time slowdown when dt too high
+	if (dt > 1.0f) exit(-12);
 	if (dt > 0.02f) dt = 0.02f;
 	//for testing
 	//assert(dt < 0.1f);
 	//if (dt > 0.1f) throw("ye");
 	dt *= GameSpeed / float(Iterations);
+	
 
-	//INPUT
+	int t_id = 0;
+	for (auto& ii : m_objects)
+	{
+		threads.push_back(std::thread(&Game::UpdateModel, this, ii, dt, ++t_id));
+	}
+	
 	for (int nn = 0; nn < Iterations; nn++)
 	{
-		inputHandling(dt);
+	inputHandling(dt);
+		if (nn == Iterations - 1) endThreads = true;
 
-		for (auto& ii : m_objects)
+		if (threadcount != 0) exit(11);
+		threadcount = t_id;
+		
 		{
-			UpdateModel(ii, dt);
+			std::lock_guard<std::mutex> lk(m);
+			ready = true;
+		}
+		
+		cv.notify_all();
+		
+		{
+			std::unique_lock<std::mutex> lk(m);
+			cv2.wait(lk, [this] {return threadcount == 0; });
+			//ready = false;
 		}
 
-		//Movement
-		for (auto& ii : m_objects)
+		if (!pause)
 		{
-			ii->Update(dt);
-		}
 
+			for (auto& ii : m_objects)
+			{
+				ii->Update(dt);
+			}
+		}
 	}
+
+		//Update Camera
+			if (m_camera && thePossesed)
+			{
+				Camera = thePossesed->m_pos;
+			}
+			else
+			{
+				Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
+			}
+		///////////////
+
 	ComposeFrame();
 	gfx.EndFrame();
+
+	for (auto& ii : threads)
+	{
+		ii.join();
+	}
+
+
+	threads.clear();
 }
 
-void Game::UpdateModel(GameObject* ii, float dt)
+void Game::UpdateModel(GameObject* ii, float dt, int id)
 {
-	if (!pause)
+	while (!endThreads)
 	{
+		
+		std::unique_lock<std::mutex> lk(m);
+		cv.wait(lk, [this] {return ready; });
+		
 
-		//Ground and Wall
-		DoWallCollision(ii,dt);
-
-		//bounce BOUNCE
-		DoCircleCollision(ii,dt);
-
-
-		//Daempfung
-		if (m_reibung)
+		if (!pause)
 		{
-			ii->m_v *= pow(Daempfungsfaktor, dt);	
+
+			//Ground and Wall
+			DoWallCollision(ii, dt);
+
+			//bounce BOUNCE
+			DoCircleCollision(ii, dt);
+
+
+			//Daempfung
+			if (m_reibung)
+			{
+				ii->m_v *= pow(Daempfungsfaktor, dt);
+			}
+
+			//Gravitation
+			if (m_gravitation)
+			{
+				ii->m_v += Vec2(0, 600.0f) * dt;
+			}
+
 		}
+		
+		--threadcount;
+		ready = false;
 
-		//Gravitation
-		if (m_gravitation)
-		{
-			//if (&ii == &m_objects.at(0)) continue;
-			ii->m_v += Vec2(0, 600.0f) * dt;
-		}
-
+		lk.unlock();
+		cv2.notify_one();
 
 	}
-
-	//Update Camera
-	if (m_camera && thePossesed) 
-	{
-		Camera = thePossesed->m_pos;
-	}
-	else
-	{
-		Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
-	}
-
 }
 
 
@@ -669,25 +719,25 @@ void Game::setupObjects()
 	thePossesed = nullptr;
 	
 	CreateCircleObject(Vec2(250, 50), 15, Colors::SoftBlue);		//0
-	CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
-	CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
-	CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
-	CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
-	CreateCircleObject(Vec2(300, 100), 15, Colors::SoftMagenta);	//5
-	CreateCircleObject(Vec2(400, 150), 15, Colors::SoftYellow);		//6
-	CreateCircleObject(Vec2(500, 150), 15, Colors::SoftWhite);		//7
-	
-	
-	CreateMutualLink(m_objects.at(1), m_objects.at(2), Federkonstante, Federlaenge);
-	CreateMutualLink(m_objects.at(2), m_objects.at(4), Federkonstante, Federlaenge);
-	CreateMutualLink(m_objects.at(3), m_objects.at(4), Federkonstante, Federlaenge);
-	CreateMutualLink(m_objects.at(1), m_objects.at(3), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(3), m_objects.at(5), Federkonstante, Federlaenge);
+	//CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
+	//CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
+	//CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
+	//CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
+	//CreateCircleObject(Vec2(300, 100), 15, Colors::SoftMagenta);	//5
+	//CreateCircleObject(Vec2(400, 150), 15, Colors::SoftYellow);		//6
+	//CreateCircleObject(Vec2(500, 150), 15, Colors::SoftWhite);		//7
+	//
+	//
+	//CreateMutualLink(m_objects.at(1), m_objects.at(2), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(2), m_objects.at(4), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(3), m_objects.at(4), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(1), m_objects.at(3), Federkonstante, Federlaenge);
+	////CreateMutualLink(m_objects.at(3), m_objects.at(5), Federkonstante, Federlaenge);
 	//CreateMutualLink(m_objects.at(4), m_objects.at(6), Federkonstante, Federlaenge);
-	CreateMutualLink(m_objects.at(5), m_objects.at(6), Federkonstante, Federlaenge + 30);
-	
-	CreateMutualLink(m_objects.at(4), m_objects.at(1), Federkonstante, Federlaenge);
-	CreateMutualLink(m_objects.at(2), m_objects.at(3), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(5), m_objects.at(6), Federkonstante, Federlaenge + 30);
+	//
+	//CreateMutualLink(m_objects.at(4), m_objects.at(1), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(2), m_objects.at(3), Federkonstante, Federlaenge);
 }
 
 
