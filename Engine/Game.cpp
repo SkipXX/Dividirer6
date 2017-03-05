@@ -67,7 +67,6 @@ void Game::Go()
 
 	if (threads.size() != m_objects.size())
 	{
-		setupObjects();
 		
 		if(threadBarrier) delete threadBarrier;
 		if(threadBarrier) delete threadBarrierPlusOne;
@@ -83,8 +82,18 @@ void Game::Go()
 			threadBarrierPlusOne = new boost::barrier(1);
 		}
 
+		if (threads.size() > 0)
+		{
+			endThreads = true;
+			threadBarrierPlusOne->wait(); //1
+			for (auto& ii : threads)
+			{
+				ii.join();
+			}
+			threads.clear();
+			endThreads = false;
+		}
 
-		threads.clear();
 		for (auto& ii : m_objects)
 		{
 			threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
@@ -196,9 +205,10 @@ void Game::Go()
 
 void Game::UpdateObject(GameObject* ii, float dt, int n)
 {
+	threadBarrierPlusOne->wait();	//1
+
 	while (!endThreads)
 	{
-		threadBarrierPlusOne->wait();	//1
 
 		for (int jj = 0; jj < n; jj++)
 		{
@@ -224,12 +234,12 @@ void Game::UpdateObject(GameObject* ii, float dt, int n)
 					ii->m_v += Vec2(0, 600.0f) * dt;
 				}
 
+
+
+				threadBarrier->wait();
+
+				ii->Update(dt);
 			}
-
-
-			threadBarrier->wait();
-
-			ii->Update(dt);
 		}
 
 		threadBarrierPlusOne->wait();	//2
@@ -824,7 +834,13 @@ void Game::setupObjects()
 	{
 		delete ii;
 	}
-	m_objects.clear();
+	m_objects.clear()
+		;
+	for (auto& ii : threads)
+	{
+		ii.~thread();
+	}
+	threads.clear();
 
 	thePossesed = nullptr;
 	
