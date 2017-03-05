@@ -62,7 +62,7 @@ void Game::Go()
 	dt *= GameSpeed / float(Iterations);
 
 	inputHandling(dt);
-
+	//xd
 
 	threadBarrier = new boost::barrier(m_objects.size());
 	threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
