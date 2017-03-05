@@ -33,6 +33,9 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <boost\thread.hpp>
+#include <boost\thread\barrier.hpp>
+
 class Game
 {
 public:
@@ -43,7 +46,7 @@ public:
 	void Go();
 private:
 	void ComposeFrame();
-	void UpdateModel(GameObject* ii,float dt,int id);
+	void UpdateObject(GameObject* ii,float dt, int n);
 	/********************************/
 	/*  User Functions              */
 	void inputHandling(float dt);
@@ -56,8 +59,6 @@ private:
 	void DeleteObject(GameObject * obj);
 	void CreateCircleObject(const Vec2 & pos, const float & radius, const Color & c);
 
-	friend void Do(Game* game);
-	friend void ThreadStuff(Game* game, GameObject* ii, float dt);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -80,6 +81,11 @@ private:
 	float GameSpeed = 1.0f;
 	float ShiftSpeedFaktor = 3.0f;
 
+
+	boost::barrier* threadBarrier;
+	std::vector<boost::thread> threads;
+
+	int Iterations = 500;
 
 	float moveSpeed = 500.0f;
 	GameObject* thePossesed = nullptr;
