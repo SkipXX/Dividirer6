@@ -78,13 +78,14 @@ private:
 	float ShiftSpeedFaktor = 3.0f;
 
 	std::mutex m;
-	std::condition_variable cv;
 	std::condition_variable cv2;
 	volatile std::atomic_int threadcount = 0;
 	std::vector<std::thread> threads;
-	volatile bool ready = false;
+	volatile bool myTrue = true;
+	HANDLE mySemaphore;
+	HANDLE mainSemaphore;
 
-	int Iterations = 500;
+	int Iterations = 50;
 
 	float moveSpeed = 500.0f;
 	GameObject* thePossesed = nullptr;

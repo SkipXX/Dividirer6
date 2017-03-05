@@ -25,6 +25,9 @@
 #include <cassert>
 #include <thread>
 
+//#include <windows.h>
+#include <stdio.h>
+
 
 
 Game::Game(MainWindow& wnd)
@@ -33,6 +36,12 @@ Game::Game(MainWindow& wnd)
 	gfx(wnd)
 {
 	setupObjects();
+
+	mainSemaphore = CreateSemaphore(
+		NULL,           // default security attributes
+		0,  // initial count
+		1,  // maximum count
+		NULL);
 }
 
 Game::~Game()
@@ -51,7 +60,7 @@ void Game::Go()
 	gfx.BeginFrame();
 
 	
-		endThreads = false;
+	endThreads = false;
 
 
 	float dt = timer.Mark();
@@ -64,36 +73,47 @@ void Game::Go()
 	dt *= GameSpeed / float(Iterations);
 	
 
+	mySemaphore = CreateSemaphore(
+		NULL,           // default security attributes
+		0,  // initial count
+		50,  // maximum count
+		NULL);          // unnamed semaphore
+
+
 	int t_id = 0;
 	for (auto& ii : m_objects)
 	{
 		threads.push_back(std::thread(&Game::UpdateModel, this, ii, dt, ++t_id));
+		
 	}
 	
 	for (int nn = 0; nn < Iterations; nn++)
 	{
-	inputHandling(dt);
+
+		inputHandling(dt);
+
 		if (nn == Iterations - 1) endThreads = true;
 
 		if (threadcount != 0) exit(11);
+
 		threadcount = t_id;
+		ReleaseSemaphore(mySemaphore, threadcount,NULL);
 		
+		WaitForSingleObject(mainSemaphore, INFINITE);
+
 		{
-			std::lock_guard<std::mutex> lk(m);
-			ready = true;
-		}
-		
-		cv.notify_all();
-		
-		{
-			std::unique_lock<std::mutex> lk(m);
-			cv2.wait(lk, [this] {return threadcount == 0; });
-			//ready = false;
+			//std::unique_lock<std::mutex> lk(m);
+			//cv2.wait(lk, [this] {return threadcount-- == 0; });
+			//while (myTrue)
+			//{	
+			//	Sleep(1);
+			//	if (threadcount == 0) break;
+			//}
 		}
 
 		if (!pause)
 		{
-
+		
 			for (auto& ii : m_objects)
 			{
 				ii->Update(dt);
@@ -115,6 +135,7 @@ void Game::Go()
 	ComposeFrame();
 	gfx.EndFrame();
 
+
 	for (auto& ii : threads)
 	{
 		ii.join();
@@ -129,9 +150,7 @@ void Game::UpdateModel(GameObject* ii, float dt, int id)
 	while (!endThreads)
 	{
 		
-		std::unique_lock<std::mutex> lk(m);
-		cv.wait(lk, [this] {return ready; });
-		
+		WaitForSingleObject(mySemaphore,INFINITE);
 
 		if (!pause)
 		{
@@ -158,15 +177,11 @@ void Game::UpdateModel(GameObject* ii, float dt, int id)
 		}
 		
 		--threadcount;
-		ready = false;
-
-		lk.unlock();
-		cv2.notify_one();
+		if(threadcount == 0) 
+			ReleaseSemaphore(mainSemaphore, 1, NULL);
 
 	}
 }
-
-
 
 
 void Game::ComposeFrame()
