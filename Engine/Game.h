@@ -82,8 +82,8 @@ private:
 	float ShiftSpeedFaktor = 3.0f;
 
 
-	boost::barrier* threadBarrier;
-	boost::barrier* threadBarrierPlusOne;
+	boost::barrier* threadBarrier = nullptr;
+	boost::barrier* threadBarrierPlusOne = nullptr;
 	std::vector<boost::thread> threads;
 	volatile bool endThreads = false;
 
