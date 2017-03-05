@@ -82,17 +82,17 @@ void Game::Go()
 			threadBarrierPlusOne = new boost::barrier(1);
 		}
 
-		if (threads.size() > 0)
-		{
-			endThreads = true;
-			threadBarrierPlusOne->wait(); //1
-			for (auto& ii : threads)
-			{
-				ii.join();
-			}
+		//if (threads.size() > 0)
+		//{
+		//	endThreads = true;
+		//	threadBarrierPlusOne->wait(); //1
+		//	for (auto& ii : threads)
+		//	{
+		//		ii.join();
+		//	}
 			threads.clear();
-			endThreads = false;
-		}
+		//	endThreads = false;
+		//}
 
 		for (auto& ii : m_objects)
 		{
