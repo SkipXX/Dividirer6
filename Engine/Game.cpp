@@ -59,40 +59,31 @@ void Game::Go()
 	//time slowdown when dt too high
 	if (dt > 1.0f) exit(-12);
 	if (dt > 0.02f) dt = 0.02f;
+	//for testing
+	assert(dt < 0.1f);
+	if (dt > 0.1f) throw("ye");
 	dt *= GameSpeed / float(Iterations);
+
+	threadBarrier = new boost::barrier(m_objects.size());
+
+	for (auto& ii : m_objects)
+	{
+		threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
+
+	}
 
 	inputHandling(dt);
 
-
-	threadBarrier = new boost::barrier(m_objects.size());
-	threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
-
-
-	//if (threads.size() != m_objects.size())
+	for (auto& ii : threads)
 	{
-		threads.clear();
-		for (auto& ii : m_objects)
-		{
-			threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
-		}
+		ii.join();
 	}
-
-
-	threadBarrierPlusOne->wait(); //1
-	threadBarrierPlusOne->wait(); //2
-
-	//for (auto& ii : threads)
-	//{
-	//	ii.join();
-	//}
 
 	ComposeFrame();
 	gfx.EndFrame();
 	
+	threads.clear();
 	delete threadBarrier;
-	//threadBarrier = nullptr;
-	delete threadBarrierPlusOne;
-	//threadBarrierPlusOne = nullptr;
 
 	/*
 	gfx.BeginFrame();
@@ -186,44 +177,39 @@ void Game::Go()
 
 void Game::UpdateObject(GameObject* ii, float dt, int n)
 {
-	while (!endThreads)
+
+	for (int jj = 0; jj < n; jj++)
 	{
-		threadBarrierPlusOne->wait();	//1
-
-		for (int jj = 0; jj < n; jj++)
+		if (!pause)
 		{
-			if (!pause)
+
+			//Ground and Wall
+			DoWallCollision(ii, dt);
+
+			//bounce BOUNCE
+			DoCircleCollision(ii, dt);
+
+
+			//Daempfung
+			if (m_reibung)
 			{
-
-				//Ground and Wall
-				DoWallCollision(ii, dt);
-
-				//bounce BOUNCE
-				DoCircleCollision(ii, dt);
-
-
-				//Daempfung
-				if (m_reibung)
-				{
-					ii->m_v *= pow(Daempfungsfaktor, dt);
-				}
-
-				//Gravitation
-				if (m_gravitation)
-				{
-					ii->m_v += Vec2(0, 600.0f) * dt;
-				}
-
+				ii->m_v *= pow(Daempfungsfaktor, dt);
 			}
 
+			//Gravitation
+			if (m_gravitation)
+			{
+				ii->m_v += Vec2(0, 600.0f) * dt;
+			}
 
-			threadBarrier->wait();
-
-			ii->Update(dt);
 		}
 
-		threadBarrierPlusOne->wait();	//2
+
+		threadBarrier->wait();
+
+		ii->Update(dt);
 	}
+
 }
 
 

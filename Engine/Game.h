@@ -83,9 +83,7 @@ private:
 
 
 	boost::barrier* threadBarrier;
-	boost::barrier* threadBarrierPlusOne;
 	std::vector<boost::thread> threads;
-	volatile bool endThreads = false;
 
 	int Iterations = 500;
 
@@ -101,5 +99,7 @@ private:
 	bool m_camera = false;
 	bool m_creatingLink = false; //not used
 	bool m_walls_lt = true;
+
+	volatile bool endThreads = false;
 	/********************************/
 };
