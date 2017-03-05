@@ -24,8 +24,8 @@
 #include <cmath>
 #include <cassert>
 #include <thread>
+#include <iostream>
 
-//#include <windows.h>
 #include <stdio.h>
 
 
@@ -37,11 +37,6 @@ Game::Game(MainWindow& wnd)
 {
 	setupObjects();
 
-	mainSemaphore = CreateSemaphore(
-		NULL,           // default security attributes
-		0,  // initial count
-		1,  // maximum count
-		NULL);
 }
 
 Game::~Game()
@@ -54,32 +49,37 @@ Game::~Game()
 }
 
 
-
 void Game::Go()
 {
+	gfx.BeginFrame();
+	// ...
+	ComposeFrame();
+	gfx.EndFrame();
+
+	/*
 	gfx.BeginFrame();
 
 	
 	endThreads = false;
-
-
+	
+	
 	float dt = timer.Mark();
 	//time slowdown when dt too high
 	if (dt > 1.0f) exit(-12);
 	if (dt > 0.02f) dt = 0.02f;
 	//for testing
-	//assert(dt < 0.1f);
-	//if (dt > 0.1f) throw("ye");
+	assert(dt < 0.1f);
+	if (dt > 0.1f) throw("ye");
 	dt *= GameSpeed / float(Iterations);
 	
-
+	
 	mySemaphore = CreateSemaphore(
 		NULL,           // default security attributes
 		0,  // initial count
 		50,  // maximum count
 		NULL);          // unnamed semaphore
-
-
+	
+	
 	int t_id = 0;
 	for (auto& ii : m_objects)
 	{
@@ -89,18 +89,18 @@ void Game::Go()
 	
 	for (int nn = 0; nn < Iterations; nn++)
 	{
-
+	
 		inputHandling(dt);
-
+	
 		if (nn == Iterations - 1) endThreads = true;
-
+	
 		if (threadcount != 0) exit(11);
-
+	
 		threadcount = t_id;
 		ReleaseSemaphore(mySemaphore, threadcount,NULL);
 		
 		WaitForSingleObject(mainSemaphore, INFINITE);
-
+	
 		{
 			//std::unique_lock<std::mutex> lk(m);
 			//cv2.wait(lk, [this] {return threadcount-- == 0; });
@@ -110,7 +110,7 @@ void Game::Go()
 			//	if (threadcount == 0) break;
 			//}
 		}
-
+	
 		if (!pause)
 		{
 		
@@ -120,7 +120,7 @@ void Game::Go()
 			}
 		}
 	}
-
+	
 		//Update Camera
 			if (m_camera && thePossesed)
 			{
@@ -131,20 +131,22 @@ void Game::Go()
 				Camera = Vec2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2);
 			}
 		///////////////
-
+	
 	ComposeFrame();
 	gfx.EndFrame();
-
-
+	
+	
 	for (auto& ii : threads)
 	{
 		ii.join();
 	}
-
-
+	
+	
 	threads.clear();
+	*/
 }
 
+/*
 void Game::UpdateModel(GameObject* ii, float dt, int id)
 {
 	while (!endThreads)
@@ -182,6 +184,8 @@ void Game::UpdateModel(GameObject* ii, float dt, int id)
 
 	}
 }
+
+*/
 
 
 void Game::ComposeFrame()

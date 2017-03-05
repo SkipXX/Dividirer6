@@ -55,6 +55,9 @@ private:
 
 	void DeleteObject(GameObject * obj);
 	void CreateCircleObject(const Vec2 & pos, const float & radius, const Color & c);
+
+	friend void Do(Game* game);
+	friend void ThreadStuff(Game* game, GameObject* ii, float dt);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -77,15 +80,6 @@ private:
 	float GameSpeed = 1.0f;
 	float ShiftSpeedFaktor = 3.0f;
 
-	std::mutex m;
-	std::condition_variable cv2;
-	volatile std::atomic_int threadcount = 0;
-	std::vector<std::thread> threads;
-	volatile bool myTrue = true;
-	HANDLE mySemaphore;
-	HANDLE mainSemaphore;
-
-	int Iterations = 50;
 
 	float moveSpeed = 500.0f;
 	GameObject* thePossesed = nullptr;
