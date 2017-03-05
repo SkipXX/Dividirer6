@@ -57,33 +57,19 @@ void Game::Go()
 	
 	float dt = timer.Mark();
 	//time slowdown when dt too high
-	//if (dt > 1.0f) exit(-12);
+	if (dt > 1.0f) exit(-12);
 	if (dt > 0.02f) dt = 0.02f;
 	dt *= GameSpeed / float(Iterations);
 
 	inputHandling(dt);
 
 
+	threadBarrier = new boost::barrier(m_objects.size());
+	threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
 
-	if (threads.size() != m_objects.size())
+
+	//if (threads.size() != m_objects.size())
 	{
-		setupObjects();
-		
-		if(threadBarrier) delete threadBarrier;
-		if(threadBarrier) delete threadBarrierPlusOne;
-
-		if (m_objects.size() != 0)
-		{
-			threadBarrier = new boost::barrier(m_objects.size());
-			threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
-		}
-		else
-		{
-			threadBarrier = new boost::barrier(1);
-			threadBarrierPlusOne = new boost::barrier(1);
-		}
-
-
 		threads.clear();
 		for (auto& ii : m_objects)
 		{
@@ -103,6 +89,10 @@ void Game::Go()
 	ComposeFrame();
 	gfx.EndFrame();
 	
+	delete threadBarrier;
+	//threadBarrier = nullptr;
+	delete threadBarrierPlusOne;
+	//threadBarrierPlusOne = nullptr;
 
 	/*
 	gfx.BeginFrame();
@@ -829,7 +819,7 @@ void Game::setupObjects()
 	thePossesed = nullptr;
 	
 	CreateCircleObject(Vec2(250, 50), 15, Colors::SoftBlue);		//0
-	CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
+	//CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
 	//CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
 	//CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
 	//CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
