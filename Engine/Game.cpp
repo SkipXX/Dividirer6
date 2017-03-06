@@ -68,6 +68,18 @@ void Game::Go()
 	if (threads.size() != m_objects.size())
 	{
 		
+		if (threads.size() != 0)
+		{
+			endThreads = true;
+			threadBarrierPlusOne->wait(); //1
+			for (auto& tt : threads)
+			{
+				tt.join();
+			}
+			endThreads = false;
+			threads.clear();
+		}
+
 		if(threadBarrier) delete threadBarrier;
 		if(threadBarrier) delete threadBarrierPlusOne;
 
@@ -83,7 +95,7 @@ void Game::Go()
 		}
 
 
-		threads.clear();
+		//threads.clear();
 		for (auto& ii : m_objects)
 		{
 			threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
@@ -198,6 +210,7 @@ void Game::UpdateObject(GameObject* ii, float dt, int n)
 	while (!endThreads)
 	{
 		threadBarrierPlusOne->wait();	//1
+		if (endThreads) break;
 
 		for (int jj = 0; jj < n; jj++)
 		{
