@@ -67,7 +67,6 @@ void Game::Go()
 
 	if (threads.size() != m_objects.size())
 	{
-		setupObjects();
 		
 		if(threadBarrier) delete threadBarrier;
 		if(threadBarrier) delete threadBarrierPlusOne;
@@ -224,12 +223,12 @@ void Game::UpdateObject(GameObject* ii, float dt, int n)
 					ii->m_v += Vec2(0, 600.0f) * dt;
 				}
 
+
+
+				threadBarrier->wait();
+
+				ii->Update(dt);
 			}
-
-
-			threadBarrier->wait();
-
-			ii->Update(dt);
 		}
 
 		threadBarrierPlusOne->wait();	//2
