@@ -212,35 +212,35 @@ void Game::UpdateObject(GameObject* ii, float dt, int n)
 		threadBarrierPlusOne->wait();	//1
 		if (endThreads) break;
 
-		for (int jj = 0; jj < n; jj++)
+		if (!pause)
 		{
-			if (!pause)
+			for (int jj = 0; jj < n; jj++)
 			{
 
-				//Ground and Wall
-				DoWallCollision(ii, dt);
+					//Ground and Wall
+					DoWallCollision(ii, dt);
 
-				//bounce BOUNCE
-				DoCircleCollision(ii, dt);
-
-
-				//Daempfung
-				if (m_reibung)
-				{
-					ii->m_v *= pow(Daempfungsfaktor, dt);
-				}
-
-				//Gravitation
-				if (m_gravitation)
-				{
-					ii->m_v += Vec2(0, 600.0f) * dt;
-				}
+					//bounce BOUNCE
+					DoCircleCollision(ii, dt);
 
 
+					//Daempfung
+					if (m_reibung)
+					{
+						ii->m_v *= pow(Daempfungsfaktor, dt);
+					}
 
-				threadBarrier->wait();
+					//Gravitation
+					if (m_gravitation)
+					{
+						ii->m_v += Vec2(0, 600.0f) * dt;
+					}
 
-				ii->Update(dt);
+
+
+					threadBarrier->wait();
+
+					ii->Update(dt);
 			}
 		}
 
