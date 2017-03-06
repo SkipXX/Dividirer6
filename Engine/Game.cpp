@@ -58,7 +58,7 @@ void Game::Go()
 	float dt = timer.Mark();
 	//time slowdown when dt too high
 	//if (dt > 1.0f) exit(-12);
-	if (dt > 0.02f) dt = 0.02f;
+	if (dt > 0.02f) dt = 0.0'2f;
 	dt *= GameSpeed / float(Iterations);
 
 	inputHandling(dt);
