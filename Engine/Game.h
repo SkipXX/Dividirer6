@@ -75,7 +75,7 @@ private:
 	GameObject* tempObjForLink;
 
 	float Federlaenge = 50.0f;
-	float Federkonstante = 100.0f;
+	float Federkonstante = 200.0f;
 	float Daempfungsfaktor = 0.5f;
 	float ThrowingStrenght = 25.0f;
 	float Reibungskoeffizient = 0.1f;

@@ -123,18 +123,21 @@ void Game::Go()
 	}
 	else
 	{
-		for (int jj = 0; jj < Iterations; jj++)
+		if (!pause)
 		{
-			for (auto& ii : m_objects)
+			for (int jj = 0; jj < Iterations; jj++)
 			{
-				UpdateObject(ii, dt);
-			}
+				for (auto& ii : m_objects)
+				{
+					UpdateObject(ii, dt);
+				}
 
-			for (auto& ii : m_objects)
-			{
-				ii->Update(dt);
-			}
+				for (auto& ii : m_objects)
+				{
+					ii->Update(dt);
+				}
 
+			}
 		}
 		ComposeFrame();
 	}
@@ -866,24 +869,24 @@ void Game::setupObjects()
 	
 	CreateCircleObject(Vec2(250, 50), 15, Colors::SoftBlue);		//0
 	CreateCircleObject(Vec2(200, 100), 15, Colors::SoftRed);		//1
-	//CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
-	//CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
-	//CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
-	//CreateCircleObject(Vec2(300, 100), 15, Colors::SoftMagenta);	//5
-	//CreateCircleObject(Vec2(400, 150), 15, Colors::SoftYellow);		//6
-	//CreateCircleObject(Vec2(500, 150), 15, Colors::SoftWhite);		//7
-	//
-	//
-	//CreateMutualLink(m_objects.at(1), m_objects.at(2), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(2), m_objects.at(4), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(3), m_objects.at(4), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(1), m_objects.at(3), Federkonstante, Federlaenge);
-	////CreateMutualLink(m_objects.at(3), m_objects.at(5), Federkonstante, Federlaenge);
+	CreateCircleObject(Vec2(200, 150), 15, Colors::SoftGreen);		//2
+	CreateCircleObject(Vec2(250, 100), 15, Colors::SoftCyan);		//3
+	CreateCircleObject(Vec2(250, 150), 15, Colors::Gray);			//4
+	CreateCircleObject(Vec2(300, 100), 15, Colors::SoftMagenta);	//5
+	CreateCircleObject(Vec2(400, 150), 15, Colors::SoftYellow);		//6
+	CreateCircleObject(Vec2(500, 150), 15, Colors::SoftWhite);		//7
+	
+	
+	CreateMutualLink(m_objects.at(1), m_objects.at(2), Federkonstante, Federlaenge);
+	CreateMutualLink(m_objects.at(2), m_objects.at(4), Federkonstante, Federlaenge);
+	CreateMutualLink(m_objects.at(3), m_objects.at(4), Federkonstante, Federlaenge);
+	CreateMutualLink(m_objects.at(1), m_objects.at(3), Federkonstante, Federlaenge);
+	//CreateMutualLink(m_objects.at(3), m_objects.at(5), Federkonstante, Federlaenge);
 	//CreateMutualLink(m_objects.at(4), m_objects.at(6), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(5), m_objects.at(6), Federkonstante, Federlaenge + 30);
-	//
-	//CreateMutualLink(m_objects.at(4), m_objects.at(1), Federkonstante, Federlaenge);
-	//CreateMutualLink(m_objects.at(2), m_objects.at(3), Federkonstante, Federlaenge);
+	CreateMutualLink(m_objects.at(5), m_objects.at(6), Federkonstante, Federlaenge + 30);
+	
+	CreateMutualLink(m_objects.at(4), m_objects.at(1), Federkonstante, Federlaenge);
+	CreateMutualLink(m_objects.at(2), m_objects.at(3), Federkonstante, Federlaenge);
 }
 
 
