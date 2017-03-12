@@ -104,6 +104,7 @@ void Game::Go()
 
 
 	threadBarrierPlusOne->wait(); //1
+	ComposeFrame();
 	threadBarrierPlusOne->wait(); //2
 
 	//for (auto& ii : threads)
@@ -111,7 +112,6 @@ void Game::Go()
 	//	ii.join();
 	//}
 
-	ComposeFrame();
 	gfx.EndFrame();
 	
 
