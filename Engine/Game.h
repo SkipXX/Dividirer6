@@ -95,7 +95,7 @@ private:
 
 	FrameTimer timer;
 
-	uint16_t inputBuffer = 0x0;
+	uint32_t inputBuffer = 0x0;
 	bool pause = false;
 	bool m_gravitation = true;
 	bool m_reibung = true;

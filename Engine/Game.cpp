@@ -76,48 +76,68 @@ void Game::Go()
 	inputHandling(dt);
 	//xd
 
-
-	if (threads.size() != m_objects.size())
+	if (m_multithreading)
 	{
-		
-		if (threads.size() != 0)
+
+		if (threads.size() != m_objects.size())
 		{
-			endThreads = true;
-			threadBarrierPlusOne->wait(); //1
-			for (auto& tt : threads)
+
+			if (threads.size() != 0)
 			{
-				tt.join();
+				endThreads = true;
+				threadBarrierPlusOne->wait(); //1
+				for (auto& tt : threads)
+				{
+					tt.join();
+				}
+				endThreads = false;
+				threads.clear();
 			}
-			endThreads = false;
+
+			if (threadBarrier) delete threadBarrier;
+			if (threadBarrier) delete threadBarrierPlusOne;
+
+			if (m_objects.size() != 0)
+			{
+				threadBarrier = new boost::barrier(m_objects.size());
+				threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
+			}
+			else
+			{
+				threadBarrier = new boost::barrier(1);
+				threadBarrierPlusOne = new boost::barrier(1);
+			}
+
+
 			threads.clear();
-		}
-
-		if(threadBarrier) delete threadBarrier;
-		if(threadBarrier) delete threadBarrierPlusOne;
-
-		if (m_objects.size() != 0)
-		{
-			threadBarrier = new boost::barrier(m_objects.size());
-			threadBarrierPlusOne = new boost::barrier(m_objects.size() + 1);
-		}
-		else
-		{
-			threadBarrier = new boost::barrier(1);
-			threadBarrierPlusOne = new boost::barrier(1);
+			for (auto& ii : m_objects)
+			{
+				threads.push_back(boost::thread(&Game::UpdateObject_mt, this, ii, dt, Iterations));
+			}
 		}
 
 
-		threads.clear();
-		for (auto& ii : m_objects)
-		{
-			threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
-		}
+		threadBarrierPlusOne->wait(); //1
+		ComposeFrame();
+		threadBarrierPlusOne->wait(); //2 
 	}
+	else
+	{
+		for (int jj = 0; jj < Iterations; jj++)
+		{
+			for (auto& ii : m_objects)
+			{
+				UpdateObject(ii, dt);
+			}
 
+			for (auto& ii : m_objects)
+			{
+				ii->Update(dt);
+			}
 
-	threadBarrierPlusOne->wait(); //1
-	ComposeFrame();
-	threadBarrierPlusOne->wait(); //2
+		}
+		ComposeFrame();
+	}
 
 	gfx.EndFrame();
 	
@@ -229,14 +249,12 @@ void Game::UpdateObject(GameObject* ii, float dt)
 	}
 
 	//Gravitation
-	if (m_gravitation)
+	if (m_gravitation && !ii->dragging)
 	{
 		ii->m_v += Vec2(0, 600.0f) * dt;
 	}
 
 }
-
-
 
 void Game::UpdateObject_mt(GameObject* ii, float dt, int n)
 {
@@ -690,6 +708,15 @@ void Game::inputHandling(float dt)
 		inputBuffer |= 0x800;
 	}
 
+	//if 'M'+'T' is pressed (Multithreading ON/OFF)
+	if (wnd.kbd.KeyIsPressed(0x4D) && wnd.kbd.KeyIsPressed(0x54) && !(inputBuffer & 0x1000))
+	{
+		m_multithreading = !m_multithreading;
+		inputBuffer |= 0x1000;
+	}
+
+
+
 	if (inputBuffer)
 	{
 		// 0x1 = 'SPACE'-Key ... pause funktion
@@ -761,10 +788,16 @@ void Game::inputHandling(float dt)
 			inputBuffer &= ~0x400;
 		}
 
-		// 0x200 = 'Rightclick'-Key ... Create Link
+		// 0x800 = 'Rightclick'-Key ... Create Link
 		if ((inputBuffer & 0x800) && !wnd.mouse.RightIsPressed())
 		{
 			inputBuffer &= ~0x800;
+		}
+
+		//0x1000 = 'M'+'T' is pressed (Multithreading ON/OFF)
+		if ((inputBuffer & 0x1000) && !wnd.kbd.KeyIsPressed(0x4D) && !wnd.kbd.KeyIsPressed(0x54))
+		{
+			inputBuffer &= ~0x1000;
 		}
 	}
 	///
