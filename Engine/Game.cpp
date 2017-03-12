@@ -48,6 +48,18 @@ Game::~Game()
 		delete ii;
 	}
 	m_objects.clear();
+
+	if (threads.size() != 0)
+	{
+		endThreads = true;
+		threadBarrierPlusOne->wait(); //1
+		for (auto& tt : threads)
+		{
+			tt.join();
+		}
+		endThreads = false;
+		threads.clear();
+	}
 }
 
 
@@ -95,7 +107,7 @@ void Game::Go()
 		}
 
 
-		//threads.clear();
+		threads.clear();
 		for (auto& ii : m_objects)
 		{
 			threads.push_back(boost::thread(&Game::UpdateObject, this, ii, dt, Iterations));
@@ -106,11 +118,6 @@ void Game::Go()
 	threadBarrierPlusOne->wait(); //1
 	ComposeFrame();
 	threadBarrierPlusOne->wait(); //2
-
-	//for (auto& ii : threads)
-	//{
-	//	ii.join();
-	//}
 
 	gfx.EndFrame();
 	
@@ -205,7 +212,33 @@ void Game::Go()
 	*/
 }
 
-void Game::UpdateObject(GameObject* ii, float dt, int n)
+
+void Game::UpdateObject(GameObject* ii, float dt)
+{
+	//Ground and Wall
+	DoWallCollision(ii, dt);
+
+	//bounce BOUNCE
+	DoCircleCollision(ii, dt);
+
+
+	//Daempfung
+	if (m_reibung)
+	{
+		ii->m_v *= pow(Daempfungsfaktor, dt);
+	}
+
+	//Gravitation
+	if (m_gravitation)
+	{
+		ii->m_v += Vec2(0, 600.0f) * dt;
+	}
+
+}
+
+
+
+void Game::UpdateObject_mt(GameObject* ii, float dt, int n)
 {
 	while (!endThreads)
 	{
@@ -247,48 +280,6 @@ void Game::UpdateObject(GameObject* ii, float dt, int n)
 		threadBarrierPlusOne->wait();	//2
 	}
 }
-
-
-/*
-void Game::UpdateModel(GameObject* ii, float dt, int id)
-{
-	while (!endThreads)
-	{
-		
-		WaitForSingleObject(mySemaphore,INFINITE);
-
-		if (!pause)
-		{
-
-			//Ground and Wall
-			DoWallCollision(ii, dt);
-
-			//bounce BOUNCE
-			DoCircleCollision(ii, dt);
-
-
-			//Daempfung
-			if (m_reibung)
-			{
-				ii->m_v *= pow(Daempfungsfaktor, dt);
-			}
-
-			//Gravitation
-			if (m_gravitation)
-			{
-				ii->m_v += Vec2(0, 600.0f) * dt;
-			}
-
-		}
-		
-		--threadcount;
-		if(threadcount == 0) 
-			ReleaseSemaphore(mainSemaphore, 1, NULL);
-
-	}
-}
-
-*/
 
 
 void Game::ComposeFrame()

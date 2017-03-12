@@ -46,7 +46,8 @@ public:
 	void Go();
 private:
 	void ComposeFrame();
-	void UpdateObject(GameObject* ii,float dt, int n);
+	void UpdateObject(GameObject* ii,float dt);
+	void UpdateObject_mt(GameObject* ii, float dt, int n);
 	/********************************/
 	/*  User Functions              */
 	void inputHandling(float dt);
@@ -101,5 +102,6 @@ private:
 	bool m_camera = false;
 	bool m_creatingLink = false; //not used
 	bool m_walls_lt = true;
+	bool m_multithreading = false;
 	/********************************/
 };
